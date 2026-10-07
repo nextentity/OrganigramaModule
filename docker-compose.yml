@@ -1,0 +1,22 @@
+# MySQL opcional para desarrollo: docker compose up -d
+# Sin este servicio la aplicación usa el fallback SQLite automáticamente.
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: organigrama-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-secret}
+      MYSQL_DATABASE: ${DB_DATABASE:-organigrama}
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci
+    ports:
+      - "${DB_PORT:-3306}:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-p${DB_PASSWORD:-secret}"]
+      interval: 5s
+      retries: 20
+
+volumes:
+  mysql-data:
+

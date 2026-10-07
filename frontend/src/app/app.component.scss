@@ -1,0 +1,171 @@
+.app-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f8fafc;
+}
+
+.app-header {
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 0.85rem 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
+
+  .header-container {
+    max-width: 1440px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+
+    .brand-logo {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+      border: 1px solid #bfdbfe;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      transition: transform 0.2s ease;
+
+      &:hover {
+        transform: scale(1.05);
+      }
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+
+      .brand-title {
+        margin: 0;
+        font-size: 1.18rem;
+        font-weight: 700;
+        color: #0f172a;
+        line-height: 1.2;
+        letter-spacing: -0.02em;
+      }
+
+      .brand-subtitle {
+        font-size: 0.76rem;
+        color: #64748b;
+        font-weight: 500;
+        letter-spacing: 0.01em;
+      }
+    }
+  }
+
+  .header-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+
+    .company-selector-box {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: #f8fafc;
+      padding: 0.35rem 0.65rem 0.35rem 0.85rem;
+      border-radius: 10px;
+      border: 1px solid #cbd5e1;
+      transition: all 0.2s ease;
+
+      &:hover {
+        border-color: #94a3b8;
+        background: #ffffff;
+      }
+
+      .selector-caption {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #475569;
+        white-space: nowrap;
+      }
+    }
+  }
+}
+
+/* Barra de Navegación por Rutas */
+.sub-nav {
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 0.5rem 2rem;
+
+  .nav-container {
+    max-width: 1440px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+  }
+
+  .nav-pills-bar {
+    display: flex;
+    gap: 0.5rem;
+    background: #f1f5f9;
+    padding: 0.35rem;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+
+    .nav-tab-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.55rem 1.35rem;
+      border-radius: 9px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #64748b;
+      text-decoration: none;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+
+      i {
+        font-size: 1rem;
+        transition: color 0.2s ease;
+      }
+
+      &:hover {
+        color: #1e293b;
+        background: rgba(255, 255, 255, 0.6);
+      }
+
+      &.active-tab {
+        color: #1d4ed8;
+        background: #ffffff;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+
+        i {
+          color: #2563eb;
+        }
+      }
+    }
+  }
+}
+
+.main-content {
+  flex: 1;
+  padding-bottom: 3rem;
+}
+
+/* Ocultar en impresión */
+@media print {
+  .no-print,
+  .app-header,
+  .sub-nav {
+    display: none !important;
+  }
+}

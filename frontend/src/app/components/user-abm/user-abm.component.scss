@@ -1,0 +1,156 @@
+.user-abm-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.abm-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  background: #ffffff;
+  padding: 1rem 1.35rem;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
+
+  .search-box {
+    flex: 1;
+    min-width: 260px;
+    max-width: 460px;
+
+    .search-input {
+      border-radius: 10px;
+      padding-left: 2.5rem;
+      border-color: #cbd5e1;
+      font-size: 0.875rem;
+
+      &:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+      }
+    }
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 0.75rem;
+  }
+}
+
+/* Avatar compacto en tabla (34px) con borde por nivel jerárquico */
+.table-avatar-container {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 2px solid #cbd5e1;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+
+  &.level-ring-1 {
+    border-color: #f59e0b;
+    box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.15);
+  }
+
+  &.level-ring-2 {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+  }
+
+  &.level-ring-3 {
+    border-color: #10b981;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.15);
+  }
+
+  &.level-ring-other {
+    border-color: #64748b;
+  }
+
+  .table-avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+/* Estilos de formulario dentro de Dialogs */
+.user-form-container {
+  .form-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.15rem;
+
+    .form-group {
+      flex: 1;
+    }
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.15rem;
+
+    label {
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 0.4rem;
+    }
+
+    .p-inputtext,
+    .p-dropdown {
+      border-radius: 9px;
+    }
+  }
+
+  .switch-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.95rem 1.15rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    margin-top: 1.25rem;
+
+    .switch-info {
+      display: flex;
+      flex-direction: column;
+
+      .switch-title {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #1e293b;
+      }
+
+      .switch-desc {
+        font-size: 0.74rem;
+        color: #64748b;
+      }
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .abm-header {
+    flex-direction: column;
+    align-items: stretch;
+
+    .search-box {
+      max-width: 100%;
+    }
+  }
+
+  .user-form-container .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+}

@@ -1,0 +1,167 @@
+<div class="org-chart-container">
+  <!-- Cabecera Oficial Exclusiva para Impresión (@media print) -->
+  <div class="print-only-header">
+    <h1 class="print-main-title">Organigrama Jerárquico del Cliente</h1>
+    <h2 class="print-client-title" *ngIf="selectedClient">{{ selectedClient.name }}</h2>
+    <p class="print-meta" *ngIf="metrics">
+      Estructura Jerárquica Oficial · {{ metrics.total_users }} Integrantes · {{ metrics.hierarchy_depth }} Niveles de Mando · Emisión: {{ today | date:'dd/MM/yyyy HH:mm' }}
+    </p>
+  </div>
+
+  <!-- Cabecera de Métricas de Negocio (Oculto en Impresión) -->
+  <div *ngIf="metrics" class="metrics-grid no-print mb-4">
+    <div class="metric-card shadow-sm">
+      <div class="icon-wrapper blue">
+        <i class="pi pi-users"></i>
+      </div>
+      <div class="metric-info">
+        <span class="metric-value">{{ metrics.total_users }}</span>
+        <span class="metric-label">Personal Total</span>
+      </div>
+    </div>
+
+    <div class="metric-card shadow-sm">
+      <div class="icon-wrapper indigo">
+        <i class="pi pi-sitemap"></i>
+      </div>
+      <div class="metric-info">
+        <span class="metric-value">{{ metrics.hierarchy_depth }} Niveles</span>
+        <span class="metric-label">Profundidad Máxima</span>
+      </div>
+    </div>
+
+    <div class="metric-card shadow-sm">
+      <div class="icon-wrapper purple">
+        <i class="pi pi-briefcase"></i>
+      </div>
+      <div class="metric-info">
+        <span class="metric-value">{{ metrics.managers }} Líderes</span>
+        <span class="metric-label">{{ metrics.individual_contributors }} Colaboradores</span>
+      </div>
+    </div>
+
+    <div class="metric-card shadow-sm">
+      <div class="icon-wrapper emerald">
+        <i class="pi pi-chart-bar"></i>
+      </div>
+      <div class="metric-info">
+        <span class="metric-value">{{ metrics.average_span_of_control }}</span>
+        <span class="metric-label">Span Promedio (Máx: {{ metrics.max_span_of_control }})</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Barra de Acciones: Imprimir, Exportar y Recargar (Oculto en Impresión) -->
+  <div class="chart-action-bar no-print mb-3">
+    <div class="bar-title">
+      <h3 class="m-0 font-bold text-slate-800 text-lg flex items-center gap-2">
+        <i class="pi pi-sitemap text-blue-600"></i> Estructura Jerárquica Visual
+      </h3>
+      <span *ngIf="selectedClient" class="text-xs text-slate-500 font-medium">
+        {{ selectedClient.name }}
+      </span>
+    </div>
+
+    <div class="actions">
+      <!-- Botón Imprimir Organigrama -->
+      <button 
+        pButton 
+        type="button"
+        label="Imprimir Organigrama" 
+        icon="pi pi-print" 
+        class="btn-print btn-sm"
+        pTooltip="Imprime o genera PDF de la estructura jerárquica limpia (Ctrl+P / ⌘P)"
+        tooltipPosition="bottom"
+        (click)="printChart()"
+        [disabled]="!chartData || chartData.length === 0"
+      ></button>
+
+      <!-- Botón Exportar Jerarquía -->
+      <button 
+        pButton 
+        type="button"
+        label="Exportar JSON" 
+        icon="pi pi-download" 
+        class="btn-export btn-sm"
+        pTooltip="Descargar árbol jerárquico completo en formato JSON estructurado"
+        tooltipPosition="bottom"
+        (click)="exportHierarchyJson()"
+        [disabled]="!chartData || chartData.length === 0"
+      ></button>
+    </div>
+  </div>
+
+  <!-- Spinner de Carga -->
+  <div *ngIf="loading" class="flex justify-center items-center p-8 no-print">
+    <p-progressSpinner styleClass="w-3rem h-3rem" strokeWidth="4"></p-progressSpinner>
+  </div>
+
+  <!-- Gráfico Interactivo de Organigrama -->
+  <div *ngIf="!loading && chartData && chartData.length > 0" class="chart-viewport p-4 bg-white rounded-xl border border-slate-200 shadow-sm">
+    <p-organizationChart [value]="chartData" selectionMode="single">
+      <ng-template let-node pTemplate="person">
+        <div class="node-card" [ngClass]="'node-level-' + (node.data.level <= 3 ? node.data.level : 'other')">
+          
+          <!-- Encabezado con Avatar Redondo y Datos Principales -->
+          <div class="node-header">
+            <div class="avatar-wrapper">
+              <img 
+                [src]="getAvatarUrl(node.data)" 
+                [alt]="node.data.full_name" 
+                class="avatar-img"
+                (error)="onAvatarError($event, node.data)"
+                loading="lazy"
+              />
+            </div>
+            <div class="user-meta">
+              <span class="user-name" [title]="node.data.full_name">{{ node.data.full_name }}</span>
+              <span class="user-role">
+                <i class="pi pi-briefcase text-xs"></i> {{ getRoleTitle(node.data) }}
+              </span>
+              <span class="user-email text-xs">{{ node.data.email }}</span>
+            </div>
+          </div>
+
+          <!-- Cuerpo de la Tarjeta: Nivel y Badge de Jefe Directo -->
+          <div class="node-body">
+            <div class="level-row mb-1">
+              <span class="badge-level" [ngClass]="'level-' + (node.data.level <= 3 ? node.data.level : 'other')">
+                Nivel {{ node.data.level }}
+              </span>
+            </div>
+
+            <!-- Badge de Jefe Directo / CEO -->
+            <div class="supervisor-row">
+              <div *ngIf="node.data.supervisor_name" class="supervisor-badge">
+                <i class="pi pi-arrow-up-right"></i>
+                <span>Jefe directo: <strong>{{ node.data.supervisor_name }}</strong></span>
+              </div>
+
+              <div *ngIf="!node.data.supervisor_name" class="supervisor-badge ceo-badge">
+                <i class="pi pi-crown"></i>
+                <span>Nivel 1 (CEO)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pie de Tarjeta: Subordinados a Cargo & Estado -->
+          <div class="node-footer" *ngIf="node.data.direct_reports > 0 || node.data.block_login">
+            <span *ngIf="node.data.direct_reports > 0" class="reports-badge" pTooltip="Subordinados directos y cadena total dependiente">
+              <i class="pi pi-users"></i> {{ node.data.direct_reports }} directos ({{ node.data.total_reports }} tot.)
+            </span>
+
+            <span *ngIf="node.data.block_login" class="status-badge danger">
+              <i class="pi pi-lock"></i> Bloqueado
+            </span>
+          </div>
+        </div>
+      </ng-template>
+    </p-organizationChart>
+  </div>
+
+  <!-- Estado vacío si no hay datos -->
+  <div *ngIf="!loading && (!chartData || chartData.length === 0)" class="empty-chart text-center p-8 bg-white rounded-xl border border-dashed border-slate-300">
+    <i class="pi pi-sitemap text-4xl text-slate-300 mb-3"></i>
+    <p class="text-slate-600 font-medium">No hay estructura jerárquica para mostrar en esta empresa.</p>
+  </div>
+</div>

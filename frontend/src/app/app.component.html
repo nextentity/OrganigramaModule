@@ -1,0 +1,70 @@
+<div class="app-layout">
+  <!-- Notificaciones Toast PrimeNG -->
+  <p-toast position="top-right"></p-toast>
+
+  <!-- Navbar Principal Superior (Oculto en Impresión) -->
+  <header class="app-header shadow-sm no-print">
+    <div class="header-container">
+      <!-- Marca & Identidad Visual -->
+      <div class="brand">
+        <div class="brand-logo shadow-xs">
+          <i class="pi pi-sitemap text-blue-600"></i>
+        </div>
+        <div class="brand-text">
+          <h1 class="brand-title">Organigrama & Personal</h1>
+          <span class="brand-subtitle">Gestión Multi-Tenant Inteligente</span>
+        </div>
+      </div>
+
+      <!-- Controles de Cabecera: Selector de Empresa y Reset -->
+      <div class="header-controls">
+        <div class="company-selector-box shadow-xs">
+          <i class="pi pi-building text-slate-500"></i>
+          <span class="selector-caption">Empresa:</span>
+          <p-dropdown 
+            [options]="clients" 
+            [(ngModel)]="selectedClient" 
+            optionLabel="name" 
+            (onChange)="onClientChange($event)"
+            placeholder="Seleccione Empresa"
+            styleClass="company-dropdown-styled"
+            [panelStyleClass]="'company-dropdown-panel'"
+          >
+            <ng-template pTemplate="selectedItem">
+              <div *ngIf="selectedClient" class="flex items-center">
+                <span class="font-semibold text-slate-800 text-sm">{{ selectedClient.name }}</span>
+              </div>
+            </ng-template>
+            <ng-template let-client pTemplate="item">
+              <span class="text-slate-800 text-sm py-0.5 block">{{ client.name }}</span>
+            </ng-template>
+          </p-dropdown>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Barra de Navegación por Rutas Independientes (Oculto en Impresión) -->
+  <nav class="sub-nav no-print">
+    <div class="nav-container">
+      <div class="nav-pills-bar">
+        <a 
+          *ngFor="let link of navLinks" 
+          [routerLink]="link.path" 
+          routerLinkActive="active-tab"
+          class="nav-tab-link"
+        >
+          <i [class]="link.icon"></i>
+          <span class="link-label">{{ link.label }}</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Contenido de las Vistas según Ruta Activa (/organigrama ó /usuarios) -->
+  <main class="main-content">
+    <div class="container-fluid">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>

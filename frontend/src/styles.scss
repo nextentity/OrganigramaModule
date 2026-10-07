@@ -1,0 +1,592 @@
+/* ==========================================================================
+   Estilos Globales & Sistema de Diseño: Organigrama Multi-Tenant
+   Aspecto moderno, profesional, limpio y minimalista.
+   ========================================================================== */
+:root {
+  --primary-color: #2563eb;
+  --primary-dark: #1d4ed8;
+  --primary-light: #eff6ff;
+  --success-color: #10b981;
+  --danger-color: #ef4444;
+  --warning-color: #f59e0b;
+  --info-color: #0284c7;
+  --purple-color: #7c3aed;
+
+  --bg-surface: #f8fafc;
+  --card-bg: #ffffff;
+  --text-main: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --border-color: #e2e8f0;
+  --border-focus: #93c5fd;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-full: 9999px;
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: var(--bg-surface);
+  color: var(--text-main);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.container-fluid {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 1.25rem 1.5rem;
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   TOOLTIPS PRIMENG MINIMALISTAS (11px, esquinas suaves, padding compacto)
+   ========================================================================== */
+.p-tooltip {
+  max-width: 280px;
+
+  .p-tooltip-text {
+    background-color: #0f172a !important;
+    color: #f8fafc !important;
+    font-size: 11px !important;
+    font-weight: 500 !important;
+    line-height: 1.35 !important;
+    padding: 0.35rem 0.65rem !important;
+    border-radius: 6px !important;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25) !important;
+    letter-spacing: 0.01em !important;
+  }
+
+  .p-tooltip-arrow {
+    border-top-color: #0f172a !important;
+    border-bottom-color: #0f172a !important;
+    border-left-color: #0f172a !important;
+    border-right-color: #0f172a !important;
+  }
+}
+
+/* ==========================================================================
+   SISTEMA DE BOTONES UNIFICADO
+   Bordes redondeados, sombras suaves y transiciones al pasar el mouse.
+   ========================================================================== */
+
+.btn-app,
+.p-button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.5rem !important;
+  font-weight: 600 !important;
+  font-size: 0.865rem !important;
+  line-height: 1.25 !important;
+  padding: 0.55rem 1.15rem !important;
+  border-radius: var(--radius-md) !important;
+  border: 1px solid transparent !important;
+  cursor: pointer !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  outline: none !important;
+  text-decoration: none !important;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.55 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+}
+
+/* Botón Primario */
+.btn-primary,
+.p-button.p-button-primary {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+  color: #ffffff !important;
+  border-color: #2563eb !important;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%) !important;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35) !important;
+  }
+}
+
+/* Botón Secundario / Outline */
+.btn-secondary,
+.p-button.p-button-secondary {
+  background: #ffffff !important;
+  color: #334155 !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+
+  &:hover:not(:disabled) {
+    background: #f8fafc !important;
+    color: #0f172a !important;
+    border-color: #94a3b8 !important;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08) !important;
+  }
+}
+
+/* Botón Éxito */
+.btn-success,
+.p-button.p-button-success {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  color: #ffffff !important;
+  border-color: #10b981 !important;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2) !important;
+
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35) !important;
+  }
+}
+
+/* Botón Peligro / Eliminar */
+.btn-danger,
+.p-button.p-button-danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+  color: #ffffff !important;
+  border-color: #ef4444 !important;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2) !important;
+
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%) !important;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35) !important;
+  }
+}
+
+/* Botón Exportación */
+.btn-export {
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(124, 58, 237, 0.3) !important;
+  box-shadow: 0 2px 5px rgba(124, 58, 237, 0.25) !important;
+
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, #6d28d9 0%, #5b21b6 100%) !important;
+    box-shadow: 0 4px 14px rgba(124, 58, 237, 0.4) !important;
+  }
+}
+
+/* Botón Imprimir */
+.btn-print {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(2, 132, 199, 0.3) !important;
+  box-shadow: 0 2px 5px rgba(2, 132, 199, 0.25) !important;
+
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, #0369a1 0%, #075985 100%) !important;
+    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4) !important;
+  }
+}
+
+/* Modificadores de tamaño */
+.btn-sm,
+.p-button.p-button-sm {
+  font-size: 0.8rem !important;
+  padding: 0.4rem 0.85rem !important;
+  border-radius: 8px !important;
+}
+
+/* Botones circulares de acción en tabla */
+.p-button.p-button-rounded {
+  border-radius: 9999px !important;
+  width: 2.25rem !important;
+  height: 2.25rem !important;
+  padding: 0 !important;
+}
+
+.p-button.p-button-text {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+
+  &:hover:not(:disabled) {
+    background: rgba(100, 116, 139, 0.1) !important;
+    transform: none !important;
+  }
+
+  &.p-button-warning {
+    color: #d97706 !important;
+    &:hover:not(:disabled) {
+      background: #fef3c7 !important;
+    }
+  }
+
+  &.p-button-danger {
+    color: #dc2626 !important;
+    &:hover:not(:disabled) {
+      background: #fee2e2 !important;
+    }
+  }
+}
+
+/* ==========================================================================
+   ESTILOS DE FORMULARIOS & DROPDOWNS
+   ========================================================================== */
+
+.p-dropdown {
+  border-radius: 8px !important;
+  border-color: #cbd5e1 !important;
+  background: #ffffff !important;
+  transition: all 0.2s ease !important;
+
+  &:not(.p-disabled):hover {
+    border-color: #94a3b8 !important;
+  }
+
+  &:not(.p-disabled).p-focus {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2) !important;
+  }
+}
+
+.company-dropdown-styled {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  min-width: 200px;
+
+  .p-dropdown-label {
+    padding: 0.25rem 0.5rem !important;
+  }
+}
+
+.p-inputtext {
+  border-radius: 8px !important;
+  border-color: #cbd5e1 !important;
+  padding: 0.6rem 0.85rem !important;
+  font-size: 0.875rem !important;
+  transition: all 0.2s ease !important;
+
+  &:enabled:hover {
+    border-color: #94a3b8 !important;
+  }
+
+  &:enabled:focus {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+  }
+}
+
+/* ==========================================================================
+   BADGES & NIVELES JERÁRQUICOS
+   ========================================================================== */
+
+.badge-level {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+
+  &.level-1 {
+    background-color: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fde68a;
+  }
+
+  &.level-2 {
+    background-color: #dbeafe;
+    color: #1e40af;
+    border: 1px solid #bfdbfe;
+  }
+
+  &.level-3 {
+    background-color: #d1fae5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+  }
+
+  &.level-4,
+  &.level-other {
+    background-color: #f1f5f9;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+  }
+}
+
+/* ==========================================================================
+   TABLA RESPONSIVE & DIALOGS
+   ========================================================================== */
+
+.table-responsive-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+
+  .p-datatable-wrapper {
+    overflow-x: auto;
+  }
+
+  /* En pantallas de escritorio >= 1024px la tabla se ajusta naturalmente sin scroll */
+  @media (min-width: 1024px) {
+    overflow-x: visible;
+
+    .p-datatable-table {
+      width: 100% !important;
+      table-layout: auto !important;
+    }
+  }
+
+  /* Solo en pantallas estrechas (< 1024px) se establece un ancho mínimo que habilita el scroll suave */
+  @media (max-width: 1023px) {
+    .p-datatable-table {
+      min-width: 780px;
+    }
+  }
+}
+
+.p-datatable {
+  .p-datatable-header {
+    background: #ffffff;
+    border: none;
+    padding: 1.25rem 1.5rem;
+  }
+
+  .p-datatable-thead > tr > th {
+    background: #f8fafc;
+    color: #475569;
+    font-weight: 700;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-color: #f1f5f9;
+    padding: 0.85rem 1rem;
+    white-space: nowrap;
+  }
+
+  .p-datatable-tbody > tr {
+    transition: background-color 0.15s ease;
+
+    > td {
+      border-color: #f1f5f9;
+      padding: 0.85rem 1rem;
+      font-size: 0.875rem;
+    }
+
+    &:hover {
+      background-color: #f8fafc !important;
+    }
+  }
+
+  .p-paginator {
+    background: #ffffff;
+    border: none;
+    border-top: 1px solid #f1f5f9;
+    padding: 0.75rem 1rem;
+    border-bottom-left-radius: var(--radius-lg);
+    border-bottom-right-radius: var(--radius-lg);
+  }
+}
+
+.p-dialog {
+  border-radius: 16px !important;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25) !important;
+  border: 1px solid #e2e8f0;
+
+  .p-dialog-header {
+    background: #ffffff;
+    border-bottom: 1px solid var(--border-color);
+    padding: 1.25rem 1.75rem;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #0f172a;
+
+    .p-dialog-title {
+      font-weight: 700;
+    }
+
+    .p-dialog-header-icons {
+      gap: 0.25rem;
+    }
+  }
+
+  .p-dialog-content {
+    padding: 1.75rem;
+    background: #ffffff;
+    overflow-y: auto;
+  }
+
+  .p-dialog-footer {
+    border-top: 1px solid var(--border-color);
+    padding: 1.15rem 1.75rem;
+    background: #f8fafc;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.75rem;
+  }
+}
+
+/* ==========================================================================
+   PRIME-NG ORGANIZATION CHART RESET
+   ========================================================================== */
+
+.p-organizationchart {
+  .p-organizationchart-node-content {
+    border: none !important;
+    padding: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .p-organizationchart-line-down,
+  .p-organizationchart-line-left,
+  .p-organizationchart-line-top,
+  .p-organizationchart-line-right {
+    border-color: #94a3b8 !important;
+    border-width: 2px !important;
+  }
+
+  .p-organizationchart-node-content .p-node-toggler {
+    bottom: -12px !important;
+    color: #475569 !important;
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+  }
+}
+
+/* ==========================================================================
+   REGLAS ESTRICTAS DE IMPRESIÓN (@media print)
+   Oculta cabecera, selectores, navegación, métricas, botones y toasts.
+   Imprime únicamente el título oficial y el gráfico jerárquico centrado.
+   ========================================================================== */
+
+.print-only-header {
+  display: none;
+}
+
+@media print {
+  /* Ocultar tajantemente todos los elementos de la interfaz no imprimibles */
+  .app-header,
+  .sub-nav,
+  .metrics-grid,
+  .chart-action-bar,
+  .p-toast,
+  .p-dialog,
+  .no-print,
+  header,
+  nav,
+  footer,
+  button,
+  .p-button,
+  .p-paginator,
+  .abm-header {
+    display: none !important;
+  }
+
+  /* Configuración de página horizontal (landscape) */
+  @page {
+    size: landscape;
+    margin: 10mm 15mm;
+  }
+
+  html, body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 10pt !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .app-layout,
+  .main-content,
+  .container-fluid {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    background: transparent !important;
+  }
+
+  /* Mostrar la cabecera exclusiva de impresión */
+  .print-only-header {
+    display: block !important;
+    text-align: center !important;
+    margin: 0 auto 1.5rem auto !important;
+    padding-bottom: 0.75rem !important;
+    border-bottom: 2px solid #0f172a !important;
+    max-width: 90% !important;
+
+    .print-main-title {
+      font-size: 18pt !important;
+      font-weight: 800 !important;
+      margin: 0 0 0.35rem 0 !important;
+      color: #0f172a !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.05em !important;
+    }
+
+    .print-client-title {
+      font-size: 14pt !important;
+      font-weight: 700 !important;
+      margin: 0 0 0.4rem 0 !important;
+      color: #1d4ed8 !important;
+    }
+
+    .print-meta {
+      font-size: 9pt !important;
+      color: #475569 !important;
+      margin: 0 !important;
+    }
+  }
+
+  /* Contenedor del organigrama centrado sin bordes ni sombras de pantalla */
+  .chart-viewport {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 auto !important;
+    display: flex !important;
+    justify-content: center !important;
+    overflow: visible !important;
+    page-break-inside: avoid !important;
+  }
+
+  .p-organizationchart {
+    margin: 0 auto !important;
+    overflow: visible !important;
+  }
+
+  .node-card {
+    box-shadow: none !important;
+    border: 1.5px solid #64748b !important;
+    page-break-inside: avoid !important;
+    background: #ffffff !important;
+  }
+}
