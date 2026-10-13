@@ -105,6 +105,10 @@ final class TicketOrchestratorService
         } catch (Throwable $exception) {
             $safeMessage = self::sanitizeMessage($exception->getMessage());
 
+            if (str_contains($safeMessage, '503') || str_contains($safeMessage, 'UNAVAILABLE') || str_contains($safeMessage, 'high demand')) {
+                $this->log(sprintf('⚠ [High Demand] Gemini reporta alta demanda de concurrencia temporal (503) para ticket %s.', $ticket->id));
+            }
+
             // Manejo defensivo: registra el error sanitizado y transiciona el ticket a FAILED en SQLite
             $this->log(sprintf(
                 '✘ [Worker Error] Fallo al procesar ticket %s: %s in %s:%d',

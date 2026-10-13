@@ -135,32 +135,58 @@ final class StructuredLlmClient implements LlmClientInterface
             'temperature'     => 0.1,
         ];
 
-        $response = $client->post($endpoint, $payload, [
-            'Authorization' => "Bearer {$this->apiKey}",
-            'Content-Type'  => 'application/json',
-        ]);
+        $maxRetries = 5;
+        $lastException = null;
 
-        if (!$response->isSuccessful()) {
-            throw new RuntimeException(
-                "Error al invocar LLM ({$response->statusCode}): " . substr($response->body, 0, 300)
-            );
+        for ($attempt = 1; $attempt <= $maxRetries; $attempt++) {
+            try {
+                $response = $client->post($endpoint, $payload, [
+                    'Authorization' => "Bearer {$this->apiKey}",
+                    'Content-Type'  => 'application/json',
+                ]);
+
+                if (!$response->isSuccessful()) {
+                    if (in_array($response->statusCode, [429, 500, 502, 503, 504], true) && $attempt < $maxRetries) {
+                        $delayMicros = (int) (pow(2, $attempt) * 1_000_000 + random_int(100_000, 500_000));
+                        usleep($delayMicros);
+                        continue;
+                    }
+
+                    $safeError = substr($response->body, 0, 300);
+                    throw new RuntimeException(
+                        "Error al invocar LLM ({$response->statusCode}): {$safeError}"
+                    );
+                }
+
+                $data = $response->json();
+                $rawContent = $data['choices'][0]['message']['content'] ?? null;
+
+                if (!is_string($rawContent)) {
+                    throw new RuntimeException('Respuesta del LLM vacía o malformada.');
+                }
+
+                $parsed = json_decode($rawContent, true);
+                if (!is_array($parsed)) {
+                    throw new RuntimeException('El contenido devuelto por el LLM no es un JSON válido.');
+                }
+
+                $this->validateSchemaKeys($parsed);
+
+                return $parsed;
+            } catch (Throwable $e) {
+                $lastException = $e;
+                $msg = $e->getMessage();
+                $isNonRetryable = str_contains($msg, '400') || str_contains($msg, '401') || str_contains($msg, '403') || str_contains($msg, '404') || str_contains($msg, 'contrato');
+                if (!$isNonRetryable && $attempt < $maxRetries) {
+                    $delayMicros = (int) (pow(2, $attempt) * 1_000_000 + random_int(100_000, 500_000));
+                    usleep($delayMicros);
+                    continue;
+                }
+                throw $e;
+            }
         }
 
-        $data = $response->json();
-        $rawContent = $data['choices'][0]['message']['content'] ?? null;
-
-        if (!is_string($rawContent)) {
-            throw new RuntimeException('Respuesta del LLM vacía o malformada.');
-        }
-
-        $parsed = json_decode($rawContent, true);
-        if (!is_array($parsed)) {
-            throw new RuntimeException('El contenido devuelto por el LLM no es un JSON válido.');
-        }
-
-        $this->validateSchemaKeys($parsed);
-
-        return $parsed;
+        throw $lastException ?? new RuntimeException('Error desconocido al llamar al LLM.');
     }
 
     private function callGeminiApi(HttpClientInterface $client, string $userPrompt, string $systemInstruction): array
@@ -192,7 +218,7 @@ final class StructuredLlmClient implements LlmClientInterface
             ],
         ];
 
-        $maxRetries = 3;
+        $maxRetries = 5;
         $lastException = null;
 
         for ($attempt = 1; $attempt <= $maxRetries; $attempt++) {
@@ -204,7 +230,8 @@ final class StructuredLlmClient implements LlmClientInterface
 
                 if (!$response->isSuccessful()) {
                     if (in_array($response->statusCode, [429, 500, 502, 503, 504], true) && $attempt < $maxRetries) {
-                        usleep(1500000 * $attempt);
+                        $delayMicros = (int) (pow(2, $attempt) * 1_000_000 + random_int(100_000, 500_000));
+                        usleep($delayMicros);
                         continue;
                     }
 
@@ -231,8 +258,11 @@ final class StructuredLlmClient implements LlmClientInterface
                 return $parsed;
             } catch (Throwable $e) {
                 $lastException = $e;
-                if ($attempt < $maxRetries) {
-                    usleep(1500000 * $attempt);
+                $msg = $e->getMessage();
+                $isNonRetryable = str_contains($msg, '400') || str_contains($msg, '401') || str_contains($msg, '403') || str_contains($msg, '404') || str_contains($msg, 'contrato');
+                if (!$isNonRetryable && $attempt < $maxRetries) {
+                    $delayMicros = (int) (pow(2, $attempt) * 1_000_000 + random_int(100_000, 500_000));
+                    usleep($delayMicros);
                     continue;
                 }
                 throw $e;
