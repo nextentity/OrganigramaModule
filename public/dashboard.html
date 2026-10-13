@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Soporte Técnico — Pipeline de Triaging & Auto-Fix</title>
+    <title>AI Support Triaging & Auto-Fix Platform</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -61,18 +61,18 @@
                 </div>
                 <div>
                     <div class="flex items-center gap-2">
-                        <span class="text-sm font-semibold tracking-tight text-zinc-100">AI Support Triaging</span>
-                        <span class="text-[11px] font-mono text-zinc-400 px-1.5 py-0.5 rounded bg-zinc-800/80 border border-zinc-700/50">v2.5</span>
+                        <span class="text-sm font-semibold tracking-tight text-zinc-100">AI Support Triaging & Auto-Fix</span>
+                        <span class="text-[11px] font-mono text-zinc-400 px-1.5 py-0.5 rounded bg-zinc-800/80 border border-zinc-700/50">v3.0</span>
                     </div>
-                    <p class="text-[11px] text-zinc-400">Automatización de incidentes • Gemini 3.8 Flash • Human-in-the-Loop</p>
+                    <p class="text-[11px] text-zinc-400">Automatización de incidentes • Gemini Multi-Model Fallback • GitHub Actions Bot</p>
                 </div>
             </div>
 
             <!-- Controles y Telemetría -->
             <div class="flex items-center space-x-2 text-xs">
-                <div class="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-zinc-400 font-mono text-[11px]">
+                <div class="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-zinc-300 font-mono text-[11px]">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                    <span>gemini-3.8-flash</span>
+                    <span>gemini-3.8-flash <span class="text-zinc-500">(fallback: 3.5)</span></span>
                 </div>
                 <div class="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-zinc-400 font-mono text-[11px]">
                     <span class="w-1.5 h-1.5 rounded-full bg-zinc-400"></span>
@@ -90,39 +90,100 @@
     <!-- Contenedor Principal -->
     <main class="max-w-7xl mx-auto px-6 py-6 flex-1 w-full space-y-6">
 
-        <!-- Métricas Principales (Diseño High-Density) -->
-        <section class="grid grid-cols-2 sm:grid-cols-5 gap-3" id="stats-grid">
-            <div class="bg-surface-900 border border-zinc-800/80 rounded-lg p-3.5 flex flex-col justify-between">
-                <span class="text-xs text-zinc-400 font-medium">Total Ingestados</span>
-                <span class="text-xl font-bold font-mono text-zinc-100 mt-1" id="stat-total">0</span>
+        <!-- Banner Explicativo: Flujo Autónomo de 4 Etapas (Claro para cualquier persona externa) -->
+        <section class="bg-surface-900 border border-zinc-800/80 rounded-xl p-4 sm:p-5 space-y-3">
+            <div class="flex items-center justify-between pb-2.5 border-b border-zinc-800/60">
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <h2 class="text-xs font-semibold uppercase tracking-wider text-zinc-200">Flujo Autónomo de Resolución de Incidentes</h2>
+                </div>
+                <span class="text-[11px] font-mono text-zinc-500 hidden sm:inline">Pipeline autónomo de ingeniería • 0 fricción manual</span>
             </div>
 
-            <div class="bg-surface-900 border border-zinc-800/80 rounded-lg p-3.5 flex flex-col justify-between">
-                <span class="text-xs text-zinc-400 font-medium">En Cola</span>
-                <span class="text-xl font-bold font-mono text-amber-400/90 mt-1" id="stat-pending">0</span>
-            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs">
+                <!-- Paso 1 -->
+                <div class="p-3 rounded-lg bg-zinc-950 border border-zinc-800 flex flex-col justify-between space-y-1.5">
+                    <div class="flex items-center justify-between text-zinc-400">
+                        <span class="font-mono text-[10px] text-zinc-500 font-semibold">PASO 01</span>
+                        <i data-lucide="inbox" class="w-3.5 h-3.5 text-zinc-400"></i>
+                    </div>
+                    <div>
+                        <div class="font-semibold text-zinc-200 text-xs">1. Ingesta Multicanal</div>
+                        <p class="text-[11px] text-zinc-400 mt-0.5 leading-snug">Recepción 24/7 vía Webform, WhatsApp o API REST. Almacenamiento seguro en SQLite WAL.</p>
+                    </div>
+                </div>
 
-            <div class="bg-surface-900 border border-zinc-800/80 rounded-lg p-3.5 flex flex-col justify-between">
-                <span class="text-xs text-zinc-400 font-medium">Auto-Fixing</span>
-                <span class="text-xl font-bold font-mono text-indigo-400 mt-1" id="stat-autofix">0</span>
-            </div>
+                <!-- Paso 2 -->
+                <div class="p-3 rounded-lg bg-zinc-950 border border-zinc-800 flex flex-col justify-between space-y-1.5">
+                    <div class="flex items-center justify-between text-zinc-400">
+                        <span class="font-mono text-[10px] text-indigo-400 font-semibold">PASO 02</span>
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-indigo-400"></i>
+                    </div>
+                    <div>
+                        <div class="font-semibold text-zinc-200 text-xs">2. Triage IA con Gemini</div>
+                        <p class="text-[11px] text-zinc-400 mt-0.5 leading-snug">Clasificación de tipo (Bug, Feature, Duda), severidad y detección de si es auto-reparable.</p>
+                    </div>
+                </div>
 
-            <div class="bg-surface-900 border border-zinc-800/80 rounded-lg p-3.5 flex flex-col justify-between">
-                <span class="text-xs text-zinc-400 font-medium">Resueltos</span>
-                <span class="text-xl font-bold font-mono text-emerald-400/90 mt-1" id="stat-resolved">0</span>
-            </div>
+                <!-- Paso 3 -->
+                <div class="p-3 rounded-lg bg-zinc-950 border border-zinc-800 flex flex-col justify-between space-y-1.5">
+                    <div class="flex items-center justify-between text-zinc-400">
+                        <span class="font-mono text-[10px] text-sky-400 font-semibold">PASO 03</span>
+                        <i data-lucide="git-branch" class="w-3.5 h-3.5 text-sky-400"></i>
+                    </div>
+                    <div>
+                        <div class="font-semibold text-zinc-200 text-xs">3. Sync GitHub & Jira</div>
+                        <p class="text-[11px] text-zinc-400 mt-0.5 leading-snug">Apertura inmediata del Issue en GitHub y creación de tarjeta Jira con enlace bidireccional.</p>
+                    </div>
+                </div>
 
-            <div class="bg-surface-900 border border-zinc-800/80 rounded-lg p-3.5 flex flex-col justify-between">
-                <span class="text-xs text-zinc-400 font-medium">Fallidos</span>
-                <span class="text-xl font-bold font-mono text-rose-400/90 mt-1" id="stat-failed">0</span>
+                <!-- Paso 4 -->
+                <div class="p-3 rounded-lg bg-zinc-950 border border-zinc-800 flex flex-col justify-between space-y-1.5">
+                    <div class="flex items-center justify-between text-zinc-400">
+                        <span class="font-mono text-[10px] text-emerald-400 font-semibold">PASO 04</span>
+                        <i data-lucide="bot" class="w-3.5 h-3.5 text-emerald-400"></i>
+                    </div>
+                    <div>
+                        <div class="font-semibold text-zinc-200 text-xs">4. Auto-Fix / Resolución</div>
+                        <p class="text-[11px] text-zinc-400 mt-0.5 leading-snug">GitHub Actions crea rama, aplica el parche y abre el PR; si es duda operativa, responde al instante.</p>
+                    </div>
+                </div>
             </div>
         </section>
 
-        <!-- Cuadrícula Principal: Ingesta (Izquierda) + Pipeline de Triage (Derecha) -->
+        <!-- Métricas Principales (Diseño Uniforme y Limpio) -->
+        <section class="grid grid-cols-2 sm:grid-cols-5 gap-3" id="stats-grid">
+            <div class="bg-surface-900 border border-zinc-800/80 rounded-lg p-3.5 flex flex-col justify-between h-20">
+                <span class="text-xs text-zinc-400 font-medium">Total Ingestados</span>
+                <span class="text-xl font-bold font-mono text-zinc-100" id="stat-total">0</span>
+            </div>
+
+            <div class="bg-surface-900 border border-zinc-800/80 rounded-lg p-3.5 flex flex-col justify-between h-20">
+                <span class="text-xs text-zinc-400 font-medium">En Cola (Pendientes)</span>
+                <span class="text-xl font-bold font-mono text-amber-400/90" id="stat-pending">0</span>
+            </div>
+
+            <div class="bg-surface-900 border border-zinc-800/80 rounded-lg p-3.5 flex flex-col justify-between h-20">
+                <span class="text-xs text-zinc-400 font-medium">Auto-Fixing (En PR)</span>
+                <span class="text-xl font-bold font-mono text-indigo-400" id="stat-autofix">0</span>
+            </div>
+
+            <div class="bg-surface-900 border border-zinc-800/80 rounded-lg p-3.5 flex flex-col justify-between h-20">
+                <span class="text-xs text-zinc-400 font-medium">Resueltos</span>
+                <span class="text-xl font-bold font-mono text-emerald-400/90" id="stat-resolved">0</span>
+            </div>
+
+            <div class="bg-surface-900 border border-zinc-800/80 rounded-lg p-3.5 flex flex-col justify-between h-20">
+                <span class="text-xs text-zinc-400 font-medium">Fallidos</span>
+                <span class="text-xl font-bold font-mono text-rose-400/90" id="stat-failed">0</span>
+            </div>
+        </section>
+
+        <!-- Cuadrícula Principal: Ingesta (Izquierda, 4 cols) + Cola de Incidentes con Cards Uniformes (Derecha, 8 cols) -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             
-            <!-- Panel Izquierdo: Creación de Tickets (5 columnas) -->
-            <section class="lg:col-span-5 space-y-4">
+            <!-- Panel Izquierdo: Formulario de Ingesta & Registro de Actividad -->
+            <section class="lg:col-span-4 space-y-4">
                 
                 <div class="bg-surface-900 border border-zinc-800/80 rounded-xl p-5 space-y-4">
                     <div class="flex items-center justify-between pb-3 border-b border-zinc-800/60">
@@ -130,28 +191,28 @@
                         <span class="text-[10px] font-mono text-zinc-500">POST /api/v1/tickets</span>
                     </div>
 
-                    <!-- Escenarios Preconfigurados -->
+                    <!-- Botones de Prueba Rápida en 1 Clic -->
                     <div class="space-y-1.5">
-                        <label class="text-[11px] font-medium text-zinc-400">Escenarios de Prueba:</label>
+                        <label class="text-[11px] font-medium text-zinc-400">Escenarios de Prueba en 1 Clic:</label>
                         <div class="grid grid-cols-2 gap-1.5 text-xs">
-                            <button onclick="fillPreset('ceo_bug')" class="text-left p-2 rounded-md bg-zinc-950 hover:bg-zinc-800/80 border border-zinc-800 text-zinc-300 transition text-[11px]">
-                                <div class="font-medium text-zinc-200">Bug Crítico</div>
-                                <div class="text-[10px] text-zinc-500 truncate">Eliminar CEO (Manual)</div>
+                            <button onclick="fillPreset('autofix_button')" class="text-left p-2 rounded-md bg-zinc-950 hover:bg-zinc-800/80 border border-zinc-800 text-zinc-300 transition text-[11px]">
+                                <div class="font-medium text-indigo-300">🚀 Auto-Fix (PR)</div>
+                                <div class="text-[10px] text-zinc-500 truncate">Botón Agregar Colaborador</div>
                             </button>
 
-                            <button onclick="fillPreset('typo_fix')" class="text-left p-2 rounded-md bg-zinc-950 hover:bg-zinc-800/80 border border-zinc-800 text-zinc-300 transition text-[11px]">
-                                <div class="font-medium text-zinc-200">Auto-Fix Typo</div>
-                                <div class="text-[10px] text-zinc-500 truncate">Botón Guardar (Auto PR)</div>
+                            <button onclick="fillPreset('ceo_bug')" class="text-left p-2 rounded-md bg-zinc-950 hover:bg-zinc-800/80 border border-zinc-800 text-zinc-300 transition text-[11px]">
+                                <div class="font-medium text-zinc-200">👤 Bug Manual</div>
+                                <div class="text-[10px] text-zinc-500 truncate">Eliminar CEO (Issue #)</div>
                             </button>
 
                             <button onclick="fillPreset('oper_question')" class="text-left p-2 rounded-md bg-zinc-950 hover:bg-zinc-800/80 border border-zinc-800 text-zinc-300 transition text-[11px]">
-                                <div class="font-medium text-zinc-200">Duda Operativa</div>
-                                <div class="text-[10px] text-zinc-500 truncate">Exportar PDF (Canned)</div>
+                                <div class="font-medium text-zinc-200">💬 Duda Operativa</div>
+                                <div class="text-[10px] text-zinc-500 truncate">Exportar PDF (Respuesta)</div>
                             </button>
 
                             <button onclick="fillPreset('feature_req')" class="text-left p-2 rounded-md bg-zinc-950 hover:bg-zinc-800/80 border border-zinc-800 text-zinc-300 transition text-[11px]">
-                                <div class="font-medium text-zinc-200">Feature Request</div>
-                                <div class="text-[10px] text-zinc-500 truncate">Atajos teclado (Jira)</div>
+                                <div class="font-medium text-zinc-200">💡 Feature Request</div>
+                                <div class="text-[10px] text-zinc-500 truncate">Atajos de Teclado (Jira)</div>
                             </button>
                         </div>
                     </div>
@@ -160,7 +221,7 @@
                     <form id="create-ticket-form" onsubmit="handleCreateTicket(event)" class="space-y-3 pt-1">
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="text-[11px] text-zinc-400 block mb-1">Canal de Ingesta</label>
+                                <label class="text-[11px] text-zinc-400 block mb-1">Canal de Origen</label>
                                 <select id="input-channel" class="w-full bg-zinc-950 border border-zinc-800 rounded-md px-2.5 py-1.5 text-xs text-zinc-200 focus:outline-none focus:border-zinc-500 transition font-mono">
                                     <option value="webform">webform</option>
                                     <option value="whatsapp">whatsapp</option>
@@ -179,7 +240,7 @@
                             <textarea id="input-message" rows="3" required placeholder="Describe el problema técnico o la consulta..." class="w-full bg-zinc-950 border border-zinc-800 rounded-md p-2.5 text-xs text-zinc-200 focus:outline-none focus:border-zinc-500 transition resize-none"></textarea>
                         </div>
 
-                        <button type="submit" id="submit-ticket-btn" class="w-full py-2 px-4 rounded-md bg-zinc-100 hover:bg-white text-zinc-900 font-medium text-xs transition flex items-center justify-center gap-1.5">
+                        <button type="submit" id="submit-ticket-btn" class="w-full py-2 px-4 rounded-md bg-zinc-100 hover:bg-white text-zinc-900 font-medium text-xs transition flex items-center justify-center gap-1.5 shadow-sm">
                             <i data-lucide="send" class="w-3.5 h-3.5"></i>
                             <span>Ingestar Incidente</span>
                         </button>
@@ -188,85 +249,48 @@
                     <div id="form-feedback" class="text-xs hidden rounded-md p-2.5 border"></div>
                 </div>
 
-                <!-- Consola Monocromática de Telemetría del Agente -->
+                <!-- Consola de Telemetría del Agente -->
                 <div class="bg-surface-900 border border-zinc-800/80 rounded-xl p-4 font-mono text-xs space-y-2">
                     <div class="flex items-center justify-between pb-2 border-b border-zinc-800/60 text-zinc-400">
                         <span class="text-[11px] font-semibold text-zinc-300 flex items-center gap-1.5">
                             <span class="w-1.5 h-1.5 rounded-full bg-zinc-400"></span>
-                            <span>Registro de Actividad</span>
+                            <span>Registro de Actividad IA</span>
                         </span>
-                        <span class="text-[10px] text-zinc-500">Telemetry Stream</span>
+                        <span class="text-[10px] text-zinc-500">Live Telemetry</span>
                     </div>
 
-                    <div id="agent-thought-stream" class="space-y-1.5 h-44 overflow-y-auto pr-1 text-[11px] leading-relaxed text-zinc-400">
-                        <div class="text-zinc-600">Esperando eventos del worker...</div>
+                    <div id="agent-thought-stream" class="space-y-1.5 h-48 overflow-y-auto pr-1 text-[11px] leading-relaxed text-zinc-400">
+                        <div class="text-zinc-600">Worker en segundo plano activo y escuchando eventos...</div>
                     </div>
                 </div>
 
             </section>
 
-            <!-- Panel Derecho: Visor de Pipeline & Listado de Tickets (7 columnas) -->
-            <section class="lg:col-span-7 space-y-4">
+            <!-- Panel Derecho: Cola de Incidentes con Cards Uniformes y Paso a Paso Visual -->
+            <section class="lg:col-span-8 space-y-4">
 
-                <!-- Visor del Pipeline (Paso a Paso Minimalista) -->
-                <div id="agent-stepper-card" class="bg-surface-900 border border-zinc-800/80 rounded-xl p-5 space-y-4 hidden">
-                    <div class="flex items-center justify-between pb-3 border-b border-zinc-800/60">
-                        <div>
-                            <span class="text-[10px] font-mono text-zinc-500 uppercase">Detalle del Ticket Activo</span>
-                            <h3 class="text-xs font-mono font-semibold text-zinc-200 mt-0.5" id="stepper-ticket-id">—</h3>
-                        </div>
-                        <div id="stepper-badge-container"></div>
-                    </div>
-
-                    <!-- Pipeline en 5 etapas minimalistas -->
-                    <div class="grid grid-cols-5 gap-1.5 text-center text-xs">
-                        <div class="p-2 rounded bg-zinc-950 border border-zinc-800" id="step-node-1">
-                            <div class="font-mono font-medium text-[11px] text-zinc-300">1. Ingesta</div>
-                            <div class="text-[9px] text-zinc-500 mt-0.5">202 Accepted</div>
-                        </div>
-                        <div class="p-2 rounded bg-zinc-950 border border-zinc-800" id="step-node-2">
-                            <div class="font-mono font-medium text-[11px] text-zinc-500">2. Triage</div>
-                            <div class="text-[9px] text-zinc-600 mt-0.5">Gemini 3.8</div>
-                        </div>
-                        <div class="p-2 rounded bg-zinc-950 border border-zinc-800" id="step-node-3">
-                            <div class="font-mono font-medium text-[11px] text-zinc-500">3. Decisión</div>
-                            <div class="text-[9px] text-zinc-600 mt-0.5">Human-Loop</div>
-                        </div>
-                        <div class="p-2 rounded bg-zinc-950 border border-zinc-800" id="step-node-4">
-                            <div class="font-mono font-medium text-[11px] text-zinc-500">4. Sync</div>
-                            <div class="text-[9px] text-zinc-600 mt-0.5">GitHub / Jira</div>
-                        </div>
-                        <div class="p-2 rounded bg-zinc-950 border border-zinc-800" id="step-node-5">
-                            <div class="font-mono font-medium text-[11px] text-zinc-500">5. Auto-PR</div>
-                            <div class="text-[9px] text-zinc-600 mt-0.5">Actions Bot</div>
-                        </div>
-                    </div>
-
-                    <!-- Información resumida del Triage -->
-                    <div id="stepper-details" class="bg-zinc-950 border border-zinc-800/80 rounded-lg p-3.5 text-xs space-y-2.5">
-                        <!-- Llenado dinámico -->
-                    </div>
-                </div>
-
-                <!-- Lista de Tickets Recientes -->
-                <div class="bg-surface-900 border border-zinc-800/80 rounded-xl p-5 space-y-3">
+                <div class="bg-surface-900 border border-zinc-800/80 rounded-xl p-5 space-y-4">
                     
-                    <div class="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-zinc-800/60">
-                        <h2 class="text-xs font-semibold uppercase tracking-wider text-zinc-300">Cola de Incidentes</h2>
+                    <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-zinc-800/60">
+                        <div>
+                            <h2 class="text-xs font-semibold uppercase tracking-wider text-zinc-200">Cola de Incidentes Procesados</h2>
+                            <p class="text-[11px] text-zinc-400 mt-0.5">Estado en tiempo real de cada ticket a través del pipeline autónomo</p>
+                        </div>
 
                         <!-- Filtros Minimalistas -->
                         <div class="flex items-center space-x-1 text-xs">
-                            <button onclick="setFilter('ALL')" class="filter-btn px-2 py-0.5 rounded text-[11px] bg-zinc-800 text-zinc-100 font-mono" data-filter="ALL">Todos</button>
-                            <button onclick="setFilter('PENDING')" class="filter-btn px-2 py-0.5 rounded text-[11px] text-zinc-400 hover:text-zinc-200 font-mono" data-filter="PENDING">Pending</button>
-                            <button onclick="setFilter('AUTO_FIXING')" class="filter-btn px-2 py-0.5 rounded text-[11px] text-zinc-400 hover:text-zinc-200 font-mono" data-filter="AUTO_FIXING">Auto-Fix</button>
-                            <button onclick="setFilter('RESOLVED')" class="filter-btn px-2 py-0.5 rounded text-[11px] text-zinc-400 hover:text-zinc-200 font-mono" data-filter="RESOLVED">Resolved</button>
-                            <button onclick="setFilter('FAILED')" class="filter-btn px-2 py-0.5 rounded text-[11px] text-zinc-400 hover:text-zinc-200 font-mono" data-filter="FAILED">Failed</button>
+                            <button onclick="setFilter('ALL')" class="filter-btn px-2.5 py-1 rounded text-[11px] bg-zinc-800 text-zinc-100 font-mono" data-filter="ALL">Todos</button>
+                            <button onclick="setFilter('PENDING')" class="filter-btn px-2.5 py-1 rounded text-[11px] text-zinc-400 hover:text-zinc-200 font-mono" data-filter="PENDING">Pendientes</button>
+                            <button onclick="setFilter('AUTO_FIXING')" class="filter-btn px-2.5 py-1 rounded text-[11px] text-zinc-400 hover:text-zinc-200 font-mono" data-filter="AUTO_FIXING">Auto-Fix</button>
+                            <button onclick="setFilter('OPEN')" class="filter-btn px-2.5 py-1 rounded text-[11px] text-zinc-400 hover:text-zinc-200 font-mono" data-filter="OPEN">Abiertos</button>
+                            <button onclick="setFilter('RESOLVED')" class="filter-btn px-2.5 py-1 rounded text-[11px] text-zinc-400 hover:text-zinc-200 font-mono" data-filter="RESOLVED">Resueltos</button>
+                            <button onclick="setFilter('FAILED')" class="filter-btn px-2.5 py-1 rounded text-[11px] text-zinc-400 hover:text-zinc-200 font-mono" data-filter="FAILED">Fallidos</button>
                         </div>
                     </div>
 
-                    <!-- Feed de Tickets -->
-                    <div id="tickets-container" class="space-y-2 max-h-[520px] overflow-y-auto pr-1">
-                        <div class="text-center py-10 text-zinc-500 text-xs">
+                    <!-- Feed de Tickets en Grid de 2 Columnas de Altura Uniforme -->
+                    <div id="tickets-container" class="grid grid-cols-1 md:grid-cols-2 gap-3.5 max-h-[750px] overflow-y-auto pr-1">
+                        <div class="col-span-full text-center py-12 text-zinc-500 text-xs">
                             <i data-lucide="loader-2" class="w-5 h-5 animate-spin mx-auto mb-2 text-zinc-400"></i>
                             Cargando tickets desde SQLite...
                         </div>
@@ -280,7 +304,7 @@
 
     </main>
 
-    <!-- Modal de Inspección Detallada (Minimalista) -->
+    <!-- Modal de Inspección Detallada (Minimalista y Completo) -->
     <div id="inspector-modal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 hidden">
         <div class="bg-surface-900 border border-zinc-800 rounded-xl max-w-xl w-full max-h-[85vh] overflow-hidden flex flex-col shadow-2xl">
             <div class="p-4 border-b border-zinc-800 flex items-center justify-between">
@@ -298,7 +322,7 @@
             </div>
 
             <div class="p-3.5 border-t border-zinc-800 bg-surface-900 flex items-center justify-between">
-                <span class="text-[10px] font-mono text-zinc-500">SQLite Storage: WAL Enabled</span>
+                <span class="text-[10px] font-mono text-zinc-500">Pipeline de Triaging Autónomo</span>
                 <button onclick="closeModal()" class="px-3 py-1.5 rounded-md bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-medium transition">
                     Cerrar
                 </button>
@@ -306,24 +330,23 @@
         </div>
     </div>
 
-    <!-- Script de Reactividad en Tiempo Real -->
+    <!-- Script de Reactividad en Tiempo Real y Renderizado de Cards Uniformes -->
     <script>
         let currentFilter = 'ALL';
         let isPolling = true;
         let pollInterval = null;
         let ticketsList = [];
-        let selectedTicketId = null;
 
         const PRESETS = {
+            autofix_button: {
+                channel: 'webform',
+                customer: 'cliente_qa',
+                message: "En el ABM de personal, cambiar el texto del botón 'Nuevo Usuario' por 'Agregar Colaborador'"
+            },
             ceo_bug: {
                 channel: 'webform',
                 customer: 'acme_sa',
                 message: 'Error 500 al intentar eliminar el usuario CEO en el módulo de organigrama de Acme Tecnología S.A.'
-            },
-            typo_fix: {
-                channel: 'webform',
-                customer: 'globex_corp',
-                message: 'Hay un typo en el botón de guardar del organigrama, dice Gaurdar en lugar de Guardar en la interfaz.'
             },
             oper_question: {
                 channel: 'whatsapp',
@@ -353,13 +376,6 @@
                 ticketsList = json.data || [];
                 renderStats();
                 renderTickets();
-
-                if (selectedTicketId) {
-                    const fresh = ticketsList.find(t => t.id === selectedTicketId);
-                    if (fresh) renderStepper(fresh);
-                } else if (ticketsList.length > 0) {
-                    selectTicket(ticketsList[0].id);
-                }
             } catch (err) {
                 console.error('Error fetching tickets:', err);
             }
@@ -381,7 +397,7 @@
 
             if (filtered.length === 0) {
                 container.innerHTML = `
-                    <div class="text-center py-8 text-zinc-500 text-xs border border-zinc-800 rounded-lg">
+                    <div class="col-span-full text-center py-10 text-zinc-500 text-xs border border-zinc-800 rounded-lg">
                         No hay incidentes con estado "${currentFilter}".
                     </div>
                 `;
@@ -389,46 +405,142 @@
             }
 
             container.innerHTML = filtered.map(t => {
-                const isSelected = t.id === selectedTicketId;
                 const statusBadge = getStatusBadge(t.status);
                 const rawMsg = t.raw_payload?.message || t.raw_payload?.text || JSON.stringify(t.raw_payload);
                 const isFailed = t.status === 'FAILED';
+                const stepperHtml = getCardStepperHtml(t);
+                const shortId = t.id.slice(0, 8);
 
                 return `
-                    <div onclick="selectTicket('${t.id}')" class="p-3.5 rounded-lg bg-zinc-950 border ${isSelected ? 'border-zinc-500 bg-zinc-900/60' : 'border-zinc-800/80 hover:border-zinc-700'} cursor-pointer transition flex flex-col space-y-2">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-2">
-                                <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-zinc-400">${t.source_channel}</span>
-                                <span class="font-mono text-xs text-zinc-300 truncate max-w-[170px]">${t.id}</span>
+                    <div class="p-3.5 rounded-lg bg-zinc-950 border border-zinc-800/80 hover:border-zinc-700 transition flex flex-col justify-between h-[230px] space-y-2.5">
+                        
+                        <!-- 1. Cabecera de la Card (Canal + ID Corto + Badge Estado) -->
+                        <div class="flex items-center justify-between gap-2 shrink-0">
+                            <div class="flex items-center gap-1.5 overflow-hidden">
+                                <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-zinc-400 uppercase font-semibold shrink-0">
+                                    ${escapeHtml(t.source_channel)}
+                                </span>
+                                <span class="font-mono text-xs text-zinc-400 truncate" title="${escapeHtml(t.id)}">
+                                    #${shortId}
+                                </span>
                             </div>
-                            ${statusBadge}
+                            <div class="shrink-0">
+                                ${statusBadge}
+                            </div>
                         </div>
 
-                        <div class="text-xs text-zinc-300 line-clamp-2 leading-relaxed">
-                            ${escapeHtml(rawMsg)}
+                        <!-- 2. Cuerpo: Mensaje del Incidente (Exactamente 2 líneas para altura idéntica) -->
+                        <div class="flex-1 flex flex-col justify-center">
+                            <p class="text-xs text-zinc-300 line-clamp-2 leading-relaxed" title="${escapeHtml(rawMsg)}">
+                                ${escapeHtml(rawMsg)}
+                            </p>
                         </div>
 
-                        <div class="flex items-center justify-between text-[11px] text-zinc-500 pt-1.5 border-t border-zinc-800/50">
-                            <div class="flex items-center gap-2">
-                                <span>${escapeHtml(t.customer_id)}</span>
-                                ${t.triage_result ? `<span class="text-zinc-400 font-mono text-[10px] uppercase">• ${t.triage_result.type}</span>` : ''}
+                        <!-- 3. Mini-Stepper de 4 Pasos Automatizados (Misma altura en todas las cards) -->
+                        <div class="shrink-0">
+                            ${stepperHtml}
+                        </div>
+
+                        <!-- 4. Pie de la Card (Cliente + Acciones / Links) -->
+                        <div class="flex items-center justify-between text-[11px] text-zinc-500 pt-2 border-t border-zinc-800/60 shrink-0">
+                            <div class="flex items-center gap-2 truncate max-w-[150px]">
+                                <i data-lucide="user" class="w-3 h-3 text-zinc-500 shrink-0"></i>
+                                <span class="truncate text-zinc-400 font-mono text-[10px]">${escapeHtml(t.customer_id)}</span>
                             </div>
-                            <div class="flex items-center gap-2">
+
+                            <div class="flex items-center gap-2 shrink-0">
                                 ${isFailed ? `
-                                    <button onclick="event.stopPropagation(); retryTicket('${t.id}')" class="px-2 py-0.5 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[10px] font-mono transition">
+                                    <button onclick="event.stopPropagation(); retryTicket('${t.id}')" class="px-2 py-0.5 rounded bg-zinc-800 hover:bg-zinc-700 text-rose-300 border border-rose-900/40 text-[10px] font-mono transition">
                                         Reintentar
                                     </button>
                                 ` : ''}
-                                <button onclick="event.stopPropagation(); inspectTicket('${t.id}')" class="text-zinc-400 hover:text-zinc-200 text-[11px]">
-                                    Ver Detalle
+
+                                ${t.github_issue_number ? `
+                                    <a href="https://github.com/nextentity/OrganigramaModule/issues/${t.github_issue_number}" target="_blank" onclick="event.stopPropagation()" class="text-zinc-400 hover:text-white text-[10px] font-mono flex items-center gap-1 transition" title="Ver Issue #${t.github_issue_number}">
+                                        <span>#${t.github_issue_number}</span>
+                                        <i data-lucide="external-link" class="w-2.5 h-2.5"></i>
+                                    </a>
+                                ` : ''}
+
+                                <button onclick="inspectTicket('${t.id}')" class="px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300 text-[11px] transition">
+                                    Detalle
                                 </button>
                             </div>
                         </div>
+
                     </div>
                 `;
             }).join('');
 
             lucide.createIcons();
+        }
+
+        function getCardStepperHtml(t) {
+            // 4 Pasos: 1. Ingesta -> 2. Triage IA -> 3. Sync GitHub/Jira -> 4. Auto-Fix / Resolución
+            const s1 = { status: 'done', label: '1. Ingesta OK' };
+            let s2 = { status: 'pending', label: '2. Triage IA' };
+            let s3 = { status: 'pending', label: '3. Sync GH/Jira' };
+            let s4 = { status: 'pending', label: '4. Resolución' };
+
+            if (t.status === 'PENDING') {
+                s2 = { status: 'active', label: '2. En Cola IA...' };
+            } else if (t.status === 'FAILED') {
+                s2 = { status: 'failed', label: '2. Fallo LLM' };
+                s4 = { status: 'failed', label: '4. Requiere Reintento' };
+            } else {
+                // TRIAGED, OPEN, AUTO_FIXING, RESOLVED
+                const typeStr = t.triage_result?.type ? t.triage_result.type.replace('_', ' ') : 'Triage OK';
+                s2 = { status: 'done', label: `2. ${typeStr}` };
+
+                if (t.github_issue_number || t.jira_key) {
+                    s3 = { status: 'done', label: `3. #${t.github_issue_number || ''} ${t.jira_key || ''}`.trim() };
+                } else if (t.status === 'RESOLVED' && !t.github_issue_number) {
+                    s3 = { status: 'done', label: '3. Resuelto Directo' };
+                }
+
+                if (t.status === 'AUTO_FIXING') {
+                    s4 = { status: 'active', label: '4. Auto-PR en camino' };
+                } else if (t.status === 'RESOLVED') {
+                    s4 = { status: 'done', label: '4. Resuelto' };
+                } else if (t.status === 'OPEN') {
+                    s4 = { status: 'waiting', label: '4. Asignado Ingeniería' };
+                }
+            }
+
+            const renderStepPill = (step) => {
+                let style = 'bg-zinc-900/40 border-zinc-800/60 text-zinc-500';
+                let dot = 'bg-zinc-600';
+
+                if (step.status === 'done') {
+                    style = 'bg-zinc-900 border-zinc-700/80 text-zinc-300';
+                    dot = 'bg-emerald-400';
+                } else if (step.status === 'active') {
+                    style = 'bg-indigo-950/50 border-indigo-700/80 text-indigo-300';
+                    dot = 'bg-indigo-400 animate-pulse';
+                } else if (step.status === 'failed') {
+                    style = 'bg-rose-950/40 border-rose-900/80 text-rose-300';
+                    dot = 'bg-rose-400';
+                } else if (step.status === 'waiting') {
+                    style = 'bg-sky-950/40 border-sky-800/70 text-sky-300';
+                    dot = 'bg-sky-400';
+                }
+
+                return `
+                    <div class="flex items-center gap-1.5 px-2 py-1 rounded border text-[10px] font-mono ${style} truncate">
+                        <span class="w-1.5 h-1.5 rounded-full ${dot} shrink-0"></span>
+                        <span class="truncate">${escapeHtml(step.label)}</span>
+                    </div>
+                `;
+            };
+
+            return `
+                <div class="grid grid-cols-2 gap-1.5">
+                    ${renderStepPill(s1)}
+                    ${renderStepPill(s2)}
+                    ${renderStepPill(s3)}
+                    ${renderStepPill(s4)}
+                </div>
+            `;
         }
 
         function getStatusBadge(status) {
@@ -438,144 +550,16 @@
                 case 'TRIAGED':
                     return '<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-mono bg-zinc-900 border border-zinc-800 text-zinc-300"><span class="w-1.5 h-1.5 rounded-full bg-zinc-400"></span>TRIAGED</span>';
                 case 'AUTO_FIXING':
-                    return '<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-mono bg-zinc-900 border border-zinc-800 text-indigo-400"><span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse"></span>AUTO_FIXING</span>';
+                    return '<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-mono bg-zinc-900 border border-indigo-800/80 text-indigo-300"><span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse"></span>AUTO_FIXING</span>';
                 case 'OPEN':
-                    return '<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-mono bg-zinc-900 border border-zinc-800 text-sky-400"><span class="w-1.5 h-1.5 rounded-full bg-sky-400"></span>OPEN</span>';
+                    return '<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-mono bg-zinc-900 border border-sky-800/80 text-sky-400"><span class="w-1.5 h-1.5 rounded-full bg-sky-400"></span>OPEN</span>';
                 case 'RESOLVED':
-                    return '<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-mono bg-zinc-900 border border-zinc-800 text-emerald-400"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>RESOLVED</span>';
+                    return '<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-mono bg-zinc-900 border border-emerald-800/80 text-emerald-400"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>RESOLVED</span>';
                 case 'FAILED':
-                    return '<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-mono bg-zinc-900 border border-zinc-800 text-rose-400"><span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span>FAILED</span>';
+                    return '<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-mono bg-zinc-900 border border-rose-800/80 text-rose-400"><span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span>FAILED</span>';
                 default:
                     return `<span class="px-2 py-0.5 rounded text-[11px] font-mono bg-zinc-900 text-zinc-400">${status}</span>`;
             }
-        }
-
-        function selectTicket(id) {
-            selectedTicketId = id;
-            renderTickets();
-            const ticket = ticketsList.find(t => t.id === id);
-            if (ticket) {
-                renderStepper(ticket);
-                logAgentThought(ticket);
-            }
-        }
-
-        function renderStepper(t) {
-            const card = document.getElementById('agent-stepper-card');
-            card.classList.remove('hidden');
-            document.getElementById('stepper-ticket-id').textContent = t.id;
-            document.getElementById('stepper-badge-container').innerHTML = getStatusBadge(t.status);
-
-            const n1 = document.getElementById('step-node-1');
-            const n2 = document.getElementById('step-node-2');
-            const n3 = document.getElementById('step-node-3');
-            const n4 = document.getElementById('step-node-4');
-            const n5 = document.getElementById('step-node-5');
-
-            // Reset
-            [n1, n2, n3, n4, n5].forEach(n => {
-                n.className = "p-2 rounded bg-zinc-950 border border-zinc-800/80 text-zinc-600";
-                n.querySelector('div:first-child').className = "font-mono font-medium text-[11px] text-zinc-600";
-            });
-
-            // Node 1: Ingesta (always completed)
-            n1.className = "p-2 rounded bg-zinc-900 border border-zinc-700 text-zinc-300";
-            n1.querySelector('div:first-child').className = "font-mono font-medium text-[11px] text-zinc-200";
-
-            if (t.status === 'PENDING') {
-                n2.className = "p-2 rounded bg-zinc-900 border border-amber-600/60 text-amber-400";
-                n2.querySelector('div:first-child').className = "font-mono font-medium text-[11px] text-amber-300";
-            } else if (t.status === 'FAILED') {
-                n2.className = "p-2 rounded bg-zinc-900 border border-rose-600/60 text-rose-400";
-                n2.querySelector('div:first-child').className = "font-mono font-medium text-[11px] text-rose-300";
-            } else {
-                n2.className = "p-2 rounded bg-zinc-900 border border-zinc-700 text-zinc-300";
-                n2.querySelector('div:first-child').className = "font-mono font-medium text-[11px] text-zinc-200";
-
-                n3.className = "p-2 rounded bg-zinc-900 border border-zinc-700 text-zinc-300";
-                n3.querySelector('div:first-child').className = "font-mono font-medium text-[11px] text-zinc-200";
-
-                if (t.github_issue_number || t.jira_key || t.status === 'OPEN' || t.status === 'RESOLVED' || t.status === 'AUTO_FIXING') {
-                    n4.className = "p-2 rounded bg-zinc-900 border border-zinc-700 text-zinc-300";
-                    n4.querySelector('div:first-child').className = "font-mono font-medium text-[11px] text-zinc-200";
-                }
-
-                if (t.status === 'AUTO_FIXING') {
-                    n5.className = "p-2 rounded bg-zinc-900 border border-indigo-600/80 text-indigo-400";
-                    n5.querySelector('div:first-child').className = "font-mono font-medium text-[11px] text-indigo-300";
-                } else if (t.status === 'RESOLVED') {
-                    n5.className = "p-2 rounded bg-zinc-900 border border-emerald-600/80 text-emerald-400";
-                    n5.querySelector('div:first-child').className = "font-mono font-medium text-[11px] text-emerald-300";
-                }
-            }
-
-            const details = document.getElementById('stepper-details');
-            if (t.triage_result) {
-                const tr = t.triage_result;
-                details.innerHTML = `
-                    <div class="flex items-center justify-between pb-2 border-b border-zinc-800 text-zinc-400">
-                        <span>Dictamen del Triage</span>
-                        <span class="font-mono text-zinc-200 uppercase font-semibold text-[11px]">${tr.type} (${tr.severity})</span>
-                    </div>
-                    <div>
-                        <div class="text-[11px] text-zinc-500">Resumen:</div>
-                        <div class="text-zinc-200 mt-0.5 leading-relaxed">${escapeHtml(tr.summary)}</div>
-                    </div>
-                    ${tr.patch_hints ? `
-                    <div class="p-2.5 rounded bg-zinc-900 border border-zinc-800 text-zinc-300">
-                        <div class="text-[10px] text-zinc-500 font-mono uppercase">Indicación de Parche:</div>
-                        <div class="mt-1 font-mono text-[11px] text-zinc-300">${escapeHtml(tr.patch_hints)}</div>
-                    </div>` : ''}
-                    ${tr.canned_response ? `
-                    <div class="p-2.5 rounded bg-zinc-900 border border-zinc-800 text-zinc-300">
-                        <div class="text-[10px] text-zinc-500 font-mono uppercase">Respuesta al Cliente:</div>
-                        <div class="mt-1 text-[11px] leading-relaxed text-zinc-300">${escapeHtml(tr.canned_response)}</div>
-                    </div>` : ''}
-                    <div class="flex items-center gap-4 pt-1 text-[11px] font-mono text-zinc-400">
-                        ${t.github_issue_number ? `<span>GitHub Issue: <strong class="text-zinc-200">#${t.github_issue_number}</strong></span>` : ''}
-                        ${t.jira_key ? `<span>Jira: <strong class="text-zinc-200">${t.jira_key}</strong></span>` : ''}
-                        <span>Auto-Fixable: <strong class="text-zinc-200">${tr.is_auto_fixable ? 'SÍ' : 'NO'}</strong></span>
-                    </div>
-                `;
-            } else if (t.failure_reason) {
-                details.innerHTML = `
-                    <div class="p-3 rounded bg-zinc-900 border border-rose-900/60 text-zinc-300 space-y-2">
-                        <div class="font-mono text-[11px] text-rose-400 font-medium">Motivo del Fallo:</div>
-                        <div class="font-mono text-[11px] leading-relaxed text-zinc-400 break-words">${escapeHtml(t.failure_reason)}</div>
-                        <button onclick="retryTicket('${t.id}')" class="mt-1 px-2.5 py-1 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-mono transition">
-                            Reintentar Procesamiento
-                        </button>
-                    </div>
-                `;
-            } else {
-                details.innerHTML = `
-                    <div class="text-zinc-500 italic text-[11px]">
-                        Ticket encolado en SQLite. El worker lo reclamará en su próximo ciclo de procesamiento.
-                    </div>
-                `;
-            }
-        }
-
-        function logAgentThought(t) {
-            const stream = document.getElementById('agent-thought-stream');
-            const now = new Date().toLocaleTimeString();
-
-            let thought = '';
-            if (t.status === 'PENDING') {
-                thought = `<span class="text-zinc-500">[${now}]</span> Ticket <code class="text-zinc-200">${t.id.slice(0, 8)}</code> encolado con estado PENDING.`;
-            } else if (t.status === 'AUTO_FIXING') {
-                thought = `<span class="text-zinc-500">[${now}]</span> Clasificado como auto-reparable (is_auto_fixable=true). Trigger de GitHub Actions workflow_dispatch enviado.`;
-            } else if (t.status === 'OPEN') {
-                thought = `<span class="text-zinc-500">[${now}]</span> Bug clasificado como manual (Human-in-the-Loop). Sincronizado Issue #${t.github_issue_number} y Jira ${t.jira_key}.`;
-            } else if (t.status === 'RESOLVED') {
-                thought = `<span class="text-zinc-500">[${now}]</span> Duda operativa resuelta de forma autónoma con respuesta enlatada.`;
-            } else if (t.status === 'FAILED') {
-                thought = `<span class="text-rose-400">[${now}]</span> Incidente en estado FAILED. Error controlado guardado para reintento.`;
-            } else {
-                thought = `<span class="text-zinc-500">[${now}]</span> Evaluando ticket <code class="text-zinc-200">${t.id.slice(0, 8)}</code>...`;
-            }
-
-            stream.innerHTML = `<div class="py-1 border-b border-zinc-800/40">${thought}</div>` + stream.innerHTML;
         }
 
         async function handleCreateTicket(e) {
@@ -600,10 +584,10 @@
                 const data = await res.json();
                 if (res.status === 202) {
                     feedback.className = "text-xs rounded-md p-2.5 bg-zinc-950 border border-zinc-700 text-zinc-300 block";
-                    feedback.innerHTML = `✔ Ticket recibido (202 Accepted): <code class="font-mono text-zinc-100">${data.ticket_id}</code>.`;
+                    feedback.innerHTML = `✔ Ticket recibido (202 Accepted): <code class="font-mono text-zinc-100">${data.ticket_id}</code>. Procesando en segundo plano...`;
                     document.getElementById('input-message').value = '';
                     await fetchTickets();
-                    selectTicket(data.ticket_id);
+                    logAgentThought({ id: data.ticket_id, status: 'PENDING' });
                 } else {
                     throw new Error(data.message || 'Error en la ingesta');
                 }
@@ -621,13 +605,36 @@
                 const json = await res.json();
                 if (res.ok) {
                     await fetchTickets();
-                    selectTicket(ticketId);
+                    logAgentThought({ id: ticketId, status: 'PENDING' });
                 } else {
                     alert('Error al reintentar: ' + (json.message || 'Desconocido'));
                 }
             } catch (err) {
                 alert('Fallo de red: ' + err.message);
             }
+        }
+
+        function logAgentThought(t) {
+            const stream = document.getElementById('agent-thought-stream');
+            const now = new Date().toLocaleTimeString();
+            const shortId = t.id.slice(0, 8);
+
+            let thought = '';
+            if (t.status === 'PENDING') {
+                thought = `<span class="text-zinc-500">[${now}]</span> Ticket <code class="text-zinc-200">#${shortId}</code> encolado en SQLite. Iniciando reclamo atómico...`;
+            } else if (t.status === 'AUTO_FIXING') {
+                thought = `<span class="text-indigo-400">[${now}]</span> Auto-Fix detectado para <code class="text-zinc-200">#${shortId}</code>. Disparando GitHub Actions para generar Pull Request...`;
+            } else if (t.status === 'OPEN') {
+                thought = `<span class="text-sky-400">[${now}]</span> Incidente <code class="text-zinc-200">#${shortId}</code> requiere ingeniería. Sincronizado Issue #${t.github_issue_number} y Jira ${t.jira_key}.`;
+            } else if (t.status === 'RESOLVED') {
+                thought = `<span class="text-emerald-400">[${now}]</span> Incidente <code class="text-zinc-200">#${shortId}</code> resuelto de forma autónoma.`;
+            } else if (t.status === 'FAILED') {
+                thought = `<span class="text-rose-400">[${now}]</span> Incidente <code class="text-zinc-200">#${shortId}</code> con error controlado. Listo para reintento.`;
+            } else {
+                thought = `<span class="text-zinc-500">[${now}]</span> Evaluando ticket <code class="text-zinc-200">#${shortId}</code> con Gemini...`;
+            }
+
+            stream.innerHTML = `<div class="py-1 border-b border-zinc-800/40">${thought}</div>` + stream.innerHTML;
         }
 
         function inspectTicket(ticketId) {
@@ -641,34 +648,44 @@
             const tr = ticket.triage_result;
 
             content.innerHTML = `
+                <!-- Estado y Sincronización Externa -->
                 <div class="grid grid-cols-2 gap-3">
                     <div class="p-3 rounded-md bg-zinc-950 border border-zinc-800">
-                        <div class="text-[10px] font-mono text-zinc-500 uppercase">Estado</div>
+                        <div class="text-[10px] font-mono text-zinc-500 uppercase">Estado del Pipeline</div>
                         <div class="mt-1">${getStatusBadge(ticket.status)}</div>
                     </div>
                     <div class="p-3 rounded-md bg-zinc-950 border border-zinc-800">
-                        <div class="text-[10px] font-mono text-zinc-500 uppercase">Sincronización</div>
-                        <div class="mt-1 font-mono text-xs text-zinc-300">
-                            Issue: ${ticket.github_issue_number ? `<strong>#${ticket.github_issue_number}</strong>` : 'N/A'} • Jira: ${ticket.jira_key || 'N/A'}
+                        <div class="text-[10px] font-mono text-zinc-500 uppercase">Integraciones Externas</div>
+                        <div class="mt-1 font-mono text-xs text-zinc-300 flex items-center gap-2">
+                            ${ticket.github_issue_number ? `
+                                <a href="https://github.com/nextentity/OrganigramaModule/issues/${ticket.github_issue_number}" target="_blank" class="text-indigo-400 hover:underline flex items-center gap-1">
+                                    <span>Issue #${ticket.github_issue_number}</span>
+                                    <i data-lucide="external-link" class="w-3 h-3"></i>
+                                </a>
+                            ` : '<span>Issue: N/A</span>'}
+                            <span>•</span>
+                            <span>Jira: ${ticket.jira_key || 'N/A'}</span>
                         </div>
                     </div>
                 </div>
 
+                <!-- Mensaje Original Recibido -->
                 <div class="p-3.5 rounded-md bg-zinc-950 border border-zinc-800">
                     <div class="text-[10px] font-mono text-zinc-500 uppercase mb-1">Payload Ingestado</div>
-                    <pre class="overflow-x-auto text-[11px] font-mono text-zinc-300">${escapeHtml(JSON.stringify(ticket.raw_payload, null, 2))}</pre>
+                    <pre class="overflow-x-auto text-[11px] font-mono text-zinc-300 leading-relaxed">${escapeHtml(JSON.stringify(ticket.raw_payload, null, 2))}</pre>
                 </div>
 
+                <!-- Triage Estructurado de la IA -->
                 ${tr ? `
-                <div class="p-3.5 rounded-md bg-zinc-950 border border-zinc-800 space-y-2.5">
+                <div class="p-3.5 rounded-md bg-zinc-950 border border-zinc-800 space-y-3">
                     <div class="flex items-center justify-between pb-2 border-b border-zinc-800">
-                        <span class="text-[10px] font-mono text-zinc-500 uppercase">Evaluación Estructurada</span>
+                        <span class="text-[10px] font-mono text-zinc-400 uppercase font-semibold">Diagnóstico Estructurado (Gemini)</span>
                         <span class="text-[10px] font-mono text-zinc-300 uppercase">${tr.severity} SEVERITY</span>
                     </div>
 
                     <div>
-                        <div class="text-[11px] text-zinc-500">Resumen:</div>
-                        <div class="text-zinc-200 mt-0.5 leading-relaxed">${escapeHtml(tr.summary)}</div>
+                        <div class="text-[11px] text-zinc-500">Resumen Técnico:</div>
+                        <div class="text-zinc-200 mt-0.5 leading-relaxed font-medium">${escapeHtml(tr.summary)}</div>
                     </div>
 
                     ${tr.repro_steps && tr.repro_steps.length ? `
@@ -680,38 +697,43 @@
                     </div>` : ''}
 
                     <div class="grid grid-cols-2 gap-2 pt-1 text-[11px]">
-                        <div class="p-2 rounded bg-zinc-900 border border-zinc-800">
-                            <span class="text-[10px] text-zinc-500 block font-mono">Área Sugerida:</span>
-                            <span class="text-zinc-300 font-mono mt-0.5 block truncate">${escapeHtml(tr.suggested_area)}</span>
+                        <div class="p-2.5 rounded bg-zinc-900 border border-zinc-800">
+                            <span class="text-[10px] text-zinc-500 block font-mono">Archivo Afectado:</span>
+                            <span class="text-zinc-300 font-mono mt-0.5 block truncate" title="${escapeHtml(tr.suggested_area)}">${escapeHtml(tr.suggested_area)}</span>
                         </div>
-                        <div class="p-2 rounded bg-zinc-900 border border-zinc-800">
-                            <span class="text-[10px] text-zinc-500 block font-mono">Auto-Fixable:</span>
-                            <span class="text-zinc-200 font-mono mt-0.5 block font-semibold">${tr.is_auto_fixable ? 'SÍ' : 'NO'}</span>
+                        <div class="p-2.5 rounded bg-zinc-900 border border-zinc-800">
+                            <span class="text-[10px] text-zinc-500 block font-mono">Clasificación Auto-Fix:</span>
+                            <span class="text-zinc-200 font-mono mt-0.5 block font-semibold">${tr.is_auto_fixable ? '✔ Auto-Reparable' : 'Manual (Human-in-the-Loop)'}</span>
                         </div>
                     </div>
 
                     ${tr.patch_hints ? `
-                    <div>
-                        <div class="text-[10px] font-mono text-zinc-500 mb-0.5">Indicaciones de Parche:</div>
-                        <div class="p-2.5 rounded bg-zinc-900 border border-zinc-800 text-zinc-300 font-mono text-[11px]">${escapeHtml(tr.patch_hints)}</div>
+                    <div class="p-2.5 rounded bg-zinc-900 border border-zinc-800 text-zinc-300 space-y-1">
+                        <div class="text-[10px] font-mono text-indigo-400 font-semibold uppercase">Instrucciones del Parche Automático:</div>
+                        <div class="font-mono text-[11px] text-zinc-200 bg-zinc-950 p-2 rounded border border-zinc-800/80 break-words">${escapeHtml(tr.patch_hints)}</div>
                     </div>` : ''}
 
                     ${tr.canned_response ? `
-                    <div>
-                        <div class="text-[10px] font-mono text-zinc-500 mb-0.5">Respuesta Sugerida:</div>
-                        <div class="p-2.5 rounded bg-zinc-900 border border-zinc-800 text-zinc-300 text-xs">${escapeHtml(tr.canned_response)}</div>
+                    <div class="p-2.5 rounded bg-zinc-900 border border-zinc-800 text-zinc-300 space-y-1">
+                        <div class="text-[10px] font-mono text-emerald-400 font-semibold uppercase">Respuesta al Cliente (Duda Operativa):</div>
+                        <div class="text-xs text-zinc-200 bg-zinc-950 p-2 rounded border border-zinc-800/80 leading-relaxed">${escapeHtml(tr.canned_response)}</div>
                     </div>` : ''}
                 </div>
                 ` : ''}
 
+                <!-- En caso de Fallo -->
                 ${ticket.failure_reason ? `
-                <div class="p-3.5 rounded-md bg-zinc-950 border border-rose-900/60 text-zinc-300">
-                    <div class="text-[10px] font-mono text-rose-400 font-medium mb-1">Error Registrado:</div>
-                    <pre class="whitespace-pre-wrap font-mono text-[11px] text-zinc-400">${escapeHtml(ticket.failure_reason)}</pre>
+                <div class="p-3.5 rounded-md bg-zinc-950 border border-rose-900/60 text-zinc-300 space-y-2">
+                    <div class="text-[10px] font-mono text-rose-400 font-medium">Motivo del Fallo Sanitizado:</div>
+                    <pre class="whitespace-pre-wrap font-mono text-[11px] text-zinc-400 break-words">${escapeHtml(ticket.failure_reason)}</pre>
+                    <button onclick="retryTicket('${ticket.id}'); closeModal();" class="mt-1 px-3 py-1 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-mono transition">
+                        Reintentar Procesamiento
+                    </button>
                 </div>` : ''}
             `;
 
             document.getElementById('inspector-modal').classList.remove('hidden');
+            lucide.createIcons();
         }
 
         function closeModal() {
@@ -722,9 +744,9 @@
             currentFilter = filter;
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 if (btn.dataset.filter === filter) {
-                    btn.className = "filter-btn px-2 py-0.5 rounded text-[11px] bg-zinc-800 text-zinc-100 font-mono";
+                    btn.className = "filter-btn px-2.5 py-1 rounded text-[11px] bg-zinc-800 text-zinc-100 font-mono";
                 } else {
-                    btn.className = "filter-btn px-2 py-0.5 rounded text-[11px] text-zinc-400 hover:text-zinc-200 font-mono";
+                    btn.className = "filter-btn px-2.5 py-1 rounded text-[11px] text-zinc-400 hover:text-zinc-200 font-mono";
                 }
             });
             renderTickets();
