@@ -81,10 +81,10 @@ final class StructuredLlmClient implements LlmClientInterface
             $provider = 'gemini';
         }
 
-        $defaultModel = $provider === 'gemini' ? 'gemini-2.5-flash' : 'gpt-4o-mini';
+        $defaultModel = $provider === 'gemini' ? 'gemini-3.8-flash' : 'gpt-4o-mini';
         $model = (string) (getenv('LLM_MODEL') ?: $defaultModel);
         if ($provider === 'gemini' && ($model === 'gpt-4o-mini' || $model === '')) {
-            $model = 'gemini-2.5-flash';
+            $model = 'gemini-3.8-flash';
         }
 
         $baseUrl = (string) (getenv('LLM_BASE_URL') ?: 'https://api.openai.com/v1');
@@ -167,7 +167,7 @@ final class StructuredLlmClient implements LlmClientInterface
     {
         $model = $this->model;
         if ($model === 'gpt-4o-mini' || $model === '') {
-            $model = 'gemini-2.5-flash';
+            $model = 'gemini-3.8-flash';
         }
 
         $endpoint = sprintf(
