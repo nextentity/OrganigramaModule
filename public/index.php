@@ -36,6 +36,14 @@ $router->add('DELETE', '/api/clients/{clientId}/users/{userId}', [$controller, '
 // Reset de datos de prueba
 $router->add('POST', '/api/seed/reset', [$controller, 'resetSeed']);
 
+// Rutas del módulo de Soporte y Triaging Automatizado con IA
+$ticketRepository = new App\Infrastructure\Repository\PdoTicketRepository($pdo);
+$ticketIngestionService = new App\Application\Service\TicketIngestionService($ticketRepository);
+$ticketController = new App\Infrastructure\Http\SupportTicketController($ticketIngestionService, $ticketRepository);
+
+$router->add('POST', '/api/v1/tickets', [$ticketController, 'createTicket']);
+$router->add('GET', '/api/v1/tickets/{ticketId}', [$ticketController, 'getTicket']);
+
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 $uri = $_SERVER['REQUEST_URI'] ?? '/';
 

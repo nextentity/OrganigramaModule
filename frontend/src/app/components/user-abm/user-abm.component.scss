@@ -40,6 +40,20 @@
   }
 }
 
+/* Celda de Colaborador en tabla ABM */
+.colaborador-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  .colaborador-name {
+    padding-left: 0.15rem;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
 /* Avatar compacto en tabla (34px) con borde por nivel jerárquico */
 .table-avatar-container {
   width: 34px;

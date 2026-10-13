@@ -33,6 +33,14 @@ final class JsonResponse
         ], $statusCode);
     }
 
+    /**
+     * @param array<string, mixed> $payload
+     */
+    public static function accepted(array $payload): void
+    {
+        self::send($payload, 202);
+    }
+
     private static function send(array $payload, int $statusCode): void
     {
         if (!headers_sent()) {

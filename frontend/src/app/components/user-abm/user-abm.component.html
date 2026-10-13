@@ -63,7 +63,7 @@
             </span>
           </td>
           <td>
-            <div class="flex items-center gap-3">
+            <div class="colaborador-cell">
               <!-- Avatar Circular Compacto (34px) con Fallback de Iniciales -->
               <div class="table-avatar-container" [ngClass]="'level-ring-' + (user.level <= 3 ? user.level : 'other')">
                 <img 
@@ -74,15 +74,10 @@
                   loading="lazy"
                 />
               </div>
-              <div class="flex flex-col">
-                <span class="font-semibold text-slate-800 text-sm leading-tight">
-                  {{ user.full_name }}
-                  <span *ngIf="user.level === 1 || user.user_id === null" class="text-xs text-amber-600 font-bold ml-1">(CEO)</span>
-                </span>
-                <span class="text-xs text-slate-400" *ngIf="user.direct_reports > 0">
-                  {{ user.direct_reports }} personas a cargo
-                </span>
-              </div>
+              <span class="colaborador-name font-semibold text-slate-800 text-sm">
+                {{ user.full_name }}
+                <span *ngIf="user.level === 1 || user.user_id === null" class="text-xs text-amber-600 font-bold ml-1.5">(CEO)</span>
+              </span>
             </div>
           </td>
           <td class="text-slate-600 text-sm">{{ user.email }}</td>

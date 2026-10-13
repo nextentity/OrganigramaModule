@@ -1,0 +1,10 @@
+.git
+.github
+.env
+.env.*
+node_modules
+frontend/node_modules
+frontend/.angular
+storage/database/*.sqlite*
+storage/logs/*.log
+

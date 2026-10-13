@@ -14,7 +14,7 @@ final class Router
 
     public function add(string $method, string $pathPattern, callable $handler): void
     {
-        $regex = preg_replace('/\{([a-zA-Z0-9_]+)\}/', '(?P<$1>[0-9]+)', $pathPattern);
+        $regex = preg_replace('/\{([a-zA-Z0-9_]+)\}/', '(?P<$1>[a-zA-Z0-9_\-]+)', $pathPattern);
         $regex = '#^' . $regex . '$#';
 
         $this->routes[] = [
@@ -45,7 +45,7 @@ final class Router
 
                 if (preg_match($route['pattern'], $path, $matches) === 1) {
                     $params = array_filter($matches, static fn ($key) => is_string($key), ARRAY_FILTER_USE_KEY);
-                    $params = array_map('intval', $params);
+                    $params = array_map(static fn (mixed $v): int|string => is_numeric($v) ? (int) $v : (string) $v, $params);
 
                     call_user_func_array($route['handler'], $params);
                     return;

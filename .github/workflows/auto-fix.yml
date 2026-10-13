@@ -1,0 +1,124 @@
+name: AI Auto-Fix (Human-in-the-Loop)
+
+on:
+  workflow_dispatch:
+    inputs:
+      ticket_id:
+        description: 'UUID identificador del ticket de soporte'
+        required: true
+        type: string
+      issue_number:
+        description: 'Número de GitHub Issue asociado'
+        required: true
+        type: string
+      patch_hints:
+        description: 'Indicaciones e instrucciones generadas por la IA para el parche'
+        required: true
+        type: string
+      suggested_area:
+        description: 'Ruta relativa del archivo o módulo sugerido para la corrección'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  auto-fix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: 📥 Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🐘 Setup PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: pdo, pdo_sqlite, curl, mbstring
+          coverage: none
+
+      - name: ⚙️ Configure Git Identity
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: 🌿 Create and checkout branch
+        run: |
+          BRANCH_NAME="fix/ticket-${{ inputs.ticket_id }}"
+          git checkout -b "$BRANCH_NAME"
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+
+      - name: 🛠️ Apply automated patch
+        run: |
+          php bin/apply_patch.php \
+            --ticket-id="${{ inputs.ticket_id }}" \
+            --issue-number="${{ inputs.issue_number }}" \
+            --suggested-area="${{ inputs.suggested_area }}" \
+            --patch-hints="${{ inputs.patch_hints }}"
+
+      - name: 🔍 PHP Syntax & Linting Check
+        run: |
+          echo "Ejecutando verificación de sintaxis PHP (php -l)..."
+          find src tests bin -name "*.php" -exec php -l {} +
+
+      - name: 🧪 Run Automated Test Suite
+        run: |
+          echo "Ejecutando suite de tests del proyecto..."
+          php tests/run.php
+
+      - name: 🚀 Commit, Push and Open Pull Request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if git diff --quiet && git diff --staged --quiet; then
+            echo "ℹ No se generaron cambios en el código tras la aplicación del parche."
+            gh issue comment "${{ inputs.issue_number }}" --body "🤖 **AI Auto-Fix Info:** El workflow fue ejecutado pero no produjo cambios pendientes para el parche sugerido. Requiere revisión manual."
+            exit 0
+          fi
+
+          git add -A
+          git commit -m "fix(support): automated triage resolution for #${{ inputs.issue_number }}
+
+          Ticket ID: ${{ inputs.ticket_id }}
+          Suggested Area: ${{ inputs.suggested_area }}
+          Automated by Support AI Triaging Module"
+
+          git push origin "$BRANCH_NAME" --force
+
+          PR_BODY=$(cat <<EOF
+          ## 🤖 Automated Fix (AI Triaging Module)
+
+          Resuelve automáticamente el problema reportado en #${{ inputs.issue_number }}.
+
+          ### 📋 Detalles del Ticket
+          - **Ticket ID:** \`${{ inputs.ticket_id }}\`
+          - **GitHub Issue:** #${{ inputs.issue_number }}
+          - **Área Modificada:** \`${{ inputs.suggested_area }}\`
+
+          ### 💡 Indicaciones del Parche (LLM Triage)
+          > ${{ inputs.patch_hints }}
+
+          ### ✅ Verificaciones Pasadas
+          - [x] Sintaxis PHP validada (\`php -l\`)
+          - [x] Suite de tests completa en verde (\`php tests/run.php\`)
+
+          Closes #${{ inputs.issue_number }}
+          EOF
+          )
+
+          PR_URL=$(gh pr create \
+            --title "fix(support): automated fix for #${{ inputs.issue_number }}" \
+            --body "$PR_BODY" \
+            --base main \
+            --head "$BRANCH_NAME")
+
+          echo "✔ Pull Request creado: $PR_URL"
+
+          gh issue comment "${{ inputs.issue_number }}" --body "🤖 **AI Auto-Fix Iniciado:** Se ha creado el Pull Request automatizado $PR_URL. Por favor revise los cambios."
+

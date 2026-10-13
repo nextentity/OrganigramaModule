@@ -42,3 +42,7 @@ spl_autoload_register(static function (string $fullyQualifiedClassName): void {
 
 App\Infrastructure\Config\EnvironmentLoader::loadFile(PROJECT_ROOT . '/.env');
 
+if (is_file(PROJECT_ROOT . '/vendor/autoload.php')) {
+    require_once PROJECT_ROOT . '/vendor/autoload.php';
+}
+

@@ -1,0 +1,254 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Infrastructure\External\Llm;
+
+use App\Infrastructure\External\HttpClientInterface;
+use App\Infrastructure\External\NativeCurlHttpClient;
+use RuntimeException;
+
+/**
+ * Cliente de LLM con salidas estructuradas forzadas mediante JSON Schema.
+ * Compatible con API OpenAI / Gemini / Ollama / Local AI y modo Mock para testing determinista.
+ */
+final class StructuredLlmClient implements LlmClientInterface
+{
+    private const TRIAGE_JSON_SCHEMA = [
+        'type'                 => 'object',
+        'properties'           => [
+            'summary'         => ['type' => 'string'],
+            'type'            => ['type' => 'string', 'enum' => ['bug', 'operational_question', 'feature_request']],
+            'severity'        => ['type' => 'string', 'enum' => ['low', 'medium', 'high', 'critical']],
+            'repro_steps'     => ['type' => 'array', 'items' => ['type' => 'string']],
+            'is_auto_fixable' => ['type' => 'boolean'],
+            'suggested_area'  => ['type' => 'string'],
+            'patch_hints'     => ['type' => 'string'],
+            'canned_response' => ['type' => ['string', 'null']],
+        ],
+        'required'             => [
+            'summary',
+            'type',
+            'severity',
+            'repro_steps',
+            'is_auto_fixable',
+            'suggested_area',
+            'patch_hints',
+            'canned_response',
+        ],
+        'additionalProperties' => false,
+    ];
+
+    public function __construct(
+        private readonly string $apiKey = '',
+        private readonly string $model = 'gpt-4o-mini',
+        private readonly string $baseUrl = 'https://api.openai.com/v1',
+        private readonly ?HttpClientInterface $httpClient = null,
+        private readonly string $provider = 'openai',
+    ) {
+    }
+
+    public static function fromEnvironment(?HttpClientInterface $httpClient = null): self
+    {
+        $apiKey = (string) (getenv('LLM_API_KEY') ?: '');
+        $model = (string) (getenv('LLM_MODEL') ?: 'gpt-4o-mini');
+        $baseUrl = (string) (getenv('LLM_BASE_URL') ?: 'https://api.openai.com/v1');
+        $provider = (string) (getenv('LLM_PROVIDER') ?: 'openai');
+
+        return new self(
+            apiKey: $apiKey,
+            model: $model,
+            baseUrl: $baseUrl,
+            httpClient: $httpClient ?? new NativeCurlHttpClient(),
+            provider: $provider,
+        );
+    }
+
+    public function generateStructuredTriage(string $userPrompt, string $systemInstruction): array
+    {
+        // 1. Modo Mock para testing automatizado o desarrollo sin API Key
+        if ($this->apiKey === '' || $this->apiKey === 'mock' || $this->apiKey === 'test') {
+            return $this->generateMockTriage($userPrompt);
+        }
+
+        $client = $this->httpClient ?? new NativeCurlHttpClient();
+
+        if (strtolower($this->provider) === 'gemini') {
+            return $this->callGeminiApi($client, $userPrompt, $systemInstruction);
+        }
+
+        return $this->callOpenAiApi($client, $userPrompt, $systemInstruction);
+    }
+
+    private function callOpenAiApi(HttpClientInterface $client, string $userPrompt, string $systemInstruction): array
+    {
+        $endpoint = rtrim($this->baseUrl, '/') . '/chat/completions';
+
+        $payload = [
+            'model'           => $this->model,
+            'messages'        => [
+                ['role' => 'system', 'content' => $systemInstruction],
+                ['role' => 'user', 'content' => $userPrompt],
+            ],
+            'response_format' => [
+                'type'        => 'json_schema',
+                'json_schema' => [
+                    'name'   => 'support_triage_result',
+                    'strict' => true,
+                    'schema' => self::TRIAGE_JSON_SCHEMA,
+                ],
+            ],
+            'temperature'     => 0.1,
+        ];
+
+        $response = $client->post($endpoint, $payload, [
+            'Authorization' => "Bearer {$this->apiKey}",
+            'Content-Type'  => 'application/json',
+        ]);
+
+        if (!$response->isSuccessful()) {
+            throw new RuntimeException(
+                "Error al invocar LLM ({$response->statusCode}): " . substr($response->body, 0, 300)
+            );
+        }
+
+        $data = $response->json();
+        $rawContent = $data['choices'][0]['message']['content'] ?? null;
+
+        if (!is_string($rawContent)) {
+            throw new RuntimeException('Respuesta del LLM vacía o malformada.');
+        }
+
+        $parsed = json_decode($rawContent, true);
+        if (!is_array($parsed)) {
+            throw new RuntimeException('El contenido devuelto por el LLM no es un JSON válido.');
+        }
+
+        $this->validateSchemaKeys($parsed);
+
+        return $parsed;
+    }
+
+    private function callGeminiApi(HttpClientInterface $client, string $userPrompt, string $systemInstruction): array
+    {
+        $endpoint = sprintf(
+            'https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s',
+            urlencode($this->model),
+            urlencode($this->apiKey)
+        );
+
+        $payload = [
+            'systemInstruction' => [
+                'parts' => [['text' => $systemInstruction]],
+            ],
+            'contents'          => [
+                [
+                    'role'  => 'user',
+                    'parts' => [['text' => $userPrompt]],
+                ],
+            ],
+            'generationConfig'  => [
+                'responseMimeType' => 'application/json',
+                'responseSchema'   => self::TRIAGE_JSON_SCHEMA,
+                'temperature'      => 0.1,
+            ],
+        ];
+
+        $response = $client->post($endpoint, $payload, [
+            'Content-Type' => 'application/json',
+        ]);
+
+        if (!$response->isSuccessful()) {
+            throw new RuntimeException(
+                "Error al invocar Gemini LLM ({$response->statusCode}): " . substr($response->body, 0, 300)
+            );
+        }
+
+        $data = $response->json();
+        $rawContent = $data['candidates'][0]['content']['parts'][0]['text'] ?? null;
+
+        if (!is_string($rawContent)) {
+            throw new RuntimeException('Respuesta de Gemini vacía o malformada.');
+        }
+
+        $parsed = json_decode($rawContent, true);
+        if (!is_array($parsed)) {
+            throw new RuntimeException('El contenido devuelto por Gemini no es un JSON válido.');
+        }
+
+        $this->validateSchemaKeys($parsed);
+
+        return $parsed;
+    }
+
+    /**
+     * @param array<string, mixed> $parsed
+     */
+    private function validateSchemaKeys(array $parsed): void
+    {
+        $requiredKeys = ['summary', 'type', 'severity', 'repro_steps', 'is_auto_fixable', 'suggested_area', 'patch_hints'];
+        foreach ($requiredKeys as $key) {
+            if (!array_key_exists($key, $parsed)) {
+                throw new RuntimeException("El JSON del LLM no cumple el contrato: falta la clave '{$key}'.");
+            }
+        }
+    }
+
+    /**
+     * Generador de triage heurístico simulado para tests unitarios y CI.
+     *
+     * @return array<string, mixed>
+     */
+    private function generateMockTriage(string $prompt): array
+    {
+        $lower = strtolower($prompt);
+
+        // Caso 1: Duda operativa
+        if (str_contains($lower, 'cómo') || str_contains($lower, 'como') || str_contains($lower, 'donde') || str_contains($lower, 'ayuda') || str_contains($lower, 'question')) {
+            return [
+                'summary'         => 'Consulta sobre uso general de la plataforma',
+                'type'            => 'operational_question',
+                'severity'        => 'low',
+                'repro_steps'     => [],
+                'is_auto_fixable' => false,
+                'suggested_area'  => 'docs/user_manual',
+                'patch_hints'     => '',
+                'canned_response' => 'Hola, puedes acceder a esta funcionalidad navegando a la sección de configuración de tu organigrama.',
+            ];
+        }
+
+        // Caso 2: Bug auto-reparable (typo, frontend css, texto)
+        if (str_contains($lower, 'typo') || str_contains($lower, 'traducción') || str_contains($lower, 'ortografía') || str_contains($lower, 'color') || str_contains($lower, 'autofix')) {
+            return [
+                'summary'         => 'Error tipográfico o de visualización detectado',
+                'type'            => 'bug',
+                'severity'        => 'low',
+                'repro_steps'     => [
+                    'Abrir la pantalla del organigrama',
+                    'Verificar el texto o estilo en la cabecera',
+                ],
+                'is_auto_fixable' => true,
+                'suggested_area'  => 'frontend/src/app/components/user-abm/user-abm.component.html',
+                'patch_hints'     => 'Corregir el string en la plantilla HTML afectada.',
+                'canned_response' => null,
+            ];
+        }
+
+        // Caso 3: Bug estándar
+        return [
+            'summary'         => 'Fallo o error inesperado reportado por usuario',
+            'type'            => 'bug',
+            'severity'        => str_contains($lower, 'critico') || str_contains($lower, '500') ? 'critical' : 'medium',
+            'repro_steps'     => [
+                'Iniciar sesión en la aplicación',
+                'Intentar ejecutar la acción indicada por el usuario',
+                'Observar el error resultante',
+            ],
+            'is_auto_fixable' => false,
+            'suggested_area'  => 'src/Application/Service',
+            'patch_hints'     => 'Revisar logs del servidor y condiciones de borde en el servicio.',
+            'canned_response' => null,
+        ];
+    }
+}
+
