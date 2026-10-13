@@ -34,6 +34,11 @@ final class JiraClient implements JiraClientInterface
         );
     }
 
+    public function isConfigured(): bool
+    {
+        return $this->email !== '' && $this->apiToken !== '' && $this->apiToken !== 'mock' && $this->apiToken !== 'test';
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -43,13 +48,14 @@ final class JiraClient implements JiraClientInterface
         string $issueType = 'Bug',
         ?string $githubIssueUrl = null,
     ): array {
-        if ($this->email === '' || $this->apiToken === '' || $this->apiToken === 'mock' || $this->apiToken === 'test') {
+        if (!$this->isConfigured()) {
             $mockNum = random_int(100, 999);
             $key = "{$this->projectKey}-{$mockNum}";
             return [
-                'id'   => (string) ($mockNum * 100),
-                'key'  => $key,
-                'self' => "https://{$this->jiraDomain}/rest/api/3/issue/{$mockNum}",
+                'id'      => (string) ($mockNum * 100),
+                'key'     => $key,
+                'self'    => "https://{$this->jiraDomain}/rest/api/3/issue/{$mockNum}",
+                'is_mock' => true,
             ];
         }
 

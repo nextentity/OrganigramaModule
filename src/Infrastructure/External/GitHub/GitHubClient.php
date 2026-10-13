@@ -28,11 +28,16 @@ final class GitHubClient implements GitHubClientInterface
     {
         return new self(
             token: (string) (getenv('GITHUB_TOKEN') ?: ''),
-            owner: (string) (getenv('GITHUB_OWNER') ?: 'acme-corp'),
-            repo: (string) (getenv('GITHUB_REPO') ?: 'organigrama-module'),
+            owner: (string) (getenv('GITHUB_OWNER') ?: 'nextentity'),
+            repo: (string) (getenv('GITHUB_REPO') ?: 'OrganigramaModule'),
             httpClient: $httpClient ?? new NativeCurlHttpClient(),
             apiBaseUrl: (string) (getenv('GITHUB_API_BASE_URL') ?: 'https://api.github.com'),
         );
+    }
+
+    public function isConfigured(): bool
+    {
+        return $this->token !== '' && $this->token !== 'mock' && $this->token !== 'test';
     }
 
     /**
@@ -40,12 +45,13 @@ final class GitHubClient implements GitHubClientInterface
      */
     public function createIssue(string $title, string $body, array $labels = []): array
     {
-        if ($this->token === '' || $this->token === 'mock' || $this->token === 'test') {
+        if (!$this->isConfigured()) {
             $mockNumber = random_int(100, 999);
             return [
                 'number'   => $mockNumber,
                 'html_url' => "https://github.com/{$this->owner}/{$this->repo}/issues/{$mockNumber}",
                 'id'       => $mockNumber * 10,
+                'is_mock'  => true,
             ];
         }
 
@@ -163,6 +169,7 @@ MARKDOWN;
             'Authorization'        => "Bearer {$this->token}",
             'Accept'               => 'application/vnd.github+json',
             'X-GitHub-Api-Version' => '2022-11-28',
+            'User-Agent'           => 'Organigrama-Support-Triage-Bot/1.0',
             'Content-Type'         => 'application/json',
         ];
     }

@@ -141,7 +141,11 @@ final class TicketOrchestratorService
         $issueNumber = $githubIssue['number'];
         $issueUrl = $githubIssue['html_url'];
 
-        $this->log(sprintf('✔ [GitHub] Issue #%d creado: %s', $issueNumber, $issueUrl));
+        if (!empty($githubIssue['is_mock'])) {
+            $this->log(sprintf('⚠ [GitHub (MOCK)] GITHUB_TOKEN no configurado en Railway. Issue #%d simulado (no creado en repo real): %s', $issueNumber, $issueUrl));
+        } else {
+            $this->log(sprintf('✔ [GitHub] Issue #%d creado en GitHub: %s', $issueNumber, $issueUrl));
+        }
 
         // 2. Crear Card vinculada en Jira Cloud REST API v3
         $jiraSummary = sprintf('[Bug #%d] %s', $issueNumber, $triage->summary);
@@ -157,21 +161,29 @@ final class TicketOrchestratorService
         $jiraCard = $this->jiraClient->createIssue($jiraSummary, $jiraDescription, 'Bug', $issueUrl);
         $jiraKey = $jiraCard['key'];
 
-        $this->log(sprintf('✔ [Jira] Card %s creada y vinculada con GitHub Issue #%d', $jiraKey, $issueNumber));
+        if (!empty($jiraCard['is_mock'])) {
+            $this->log(sprintf('⚠ [Jira (MOCK)] JIRA_API_TOKEN no configurado en Railway. Card %s simulada.', $jiraKey));
+        } else {
+            $this->log(sprintf('✔ [Jira] Card %s creada y vinculada con GitHub Issue #%d', $jiraKey, $issueNumber));
+        }
 
         // 3. Auto-Fix (Human-in-the-Loop) si aplica
         if ($triage->isAutoFixable) {
             $ticket->markAsAutoFixing($issueNumber, $jiraKey);
             $this->ticketRepository->update($ticket);
 
-            $this->log(sprintf('🚀 [Auto-Fix] Disparando workflow_dispatch para Ticket %s...', $ticket->id));
+            if (!empty($githubIssue['is_mock'])) {
+                $this->log(sprintf('⚠ [Auto-Fix (MOCK)] GITHUB_TOKEN no configurado en Railway. Se omite el trigger de workflow_dispatch a GitHub Actions.'));
+            } else {
+                $this->log(sprintf('🚀 [Auto-Fix] Disparando workflow_dispatch para Ticket %s...', $ticket->id));
 
-            $this->gitHubClient->triggerWorkflowDispatch('auto-fix.yml', 'main', [
-                'ticket_id'      => $ticket->id,
-                'issue_number'   => (string) $issueNumber,
-                'patch_hints'    => $triage->patchHints,
-                'suggested_area' => $triage->suggestedArea,
-            ]);
+                $this->gitHubClient->triggerWorkflowDispatch('auto-fix.yml', 'main', [
+                    'ticket_id'      => $ticket->id,
+                    'issue_number'   => (string) $issueNumber,
+                    'patch_hints'    => $triage->patchHints,
+                    'suggested_area' => $triage->suggestedArea,
+                ]);
+            }
         } else {
             $ticket->markAsOpen($issueNumber, $jiraKey);
             $this->ticketRepository->update($ticket);

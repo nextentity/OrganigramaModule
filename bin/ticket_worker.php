@@ -50,6 +50,9 @@ $orchestrator = new TicketOrchestratorService(
 $logger('=====================================================');
 $logger('🚀 Worker de Triaging de Soporte Técnico Inicializado');
 $logger(sprintf('   Modo: %s | Batch Limit: %d | SQLite WAL Activo', $runOnce ? 'One-Shot (--once)' : 'Daemon Continuo', $limit));
+$logger(sprintf('   LLM:    %s', (getenv('LLM_API_KEY') ?: '') !== '' ? '✔ Activo (API Key detectada)' : '⚠ Modo Mock (LLM_API_KEY no configurada)'));
+$logger(sprintf('   GitHub: %s (%s/%s)', $gitHubClient->isConfigured() ? '✔ Activo (GITHUB_TOKEN configurado)' : '⚠ Modo Mock (Falta GITHUB_TOKEN)', getenv('GITHUB_OWNER') ?: 'nextentity', getenv('GITHUB_REPO') ?: 'OrganigramaModule'));
+$logger(sprintf('   Jira:   %s', $jiraClient->isConfigured() ? '✔ Activo (Jira API Token configurado)' : '⚠ Modo Mock (Falta JIRA_API_TOKEN)'));
 $logger('=====================================================');
 
 $running = true;
