@@ -47,6 +47,52 @@
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 9999px; }
         ::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+
+        /* Animación de flujo continuo secuencial entre pasos (1 -> 2 -> 3 -> 4) */
+        @keyframes flowBeam {
+            0% { transform: translateX(-100%); opacity: 0; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { transform: translateX(200%); opacity: 0; }
+        }
+        .beam-connector {
+            position: relative;
+            overflow: hidden;
+        }
+        .beam-connector::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 70%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, #818cf8, transparent);
+            opacity: 0;
+        }
+        .beam-flow-1::after {
+            animation: flowBeam 1.8s infinite ease-in-out;
+            animation-delay: 0s;
+        }
+        .beam-flow-2::after {
+            animation: flowBeam 1.8s infinite ease-in-out;
+            animation-delay: 0.6s;
+        }
+        .beam-flow-3::after {
+            animation: flowBeam 1.8s infinite ease-in-out;
+            animation-delay: 1.2s;
+        }
+        .beam-emerald::after {
+            background: linear-gradient(90deg, transparent, #34d399, transparent);
+        }
+
+        @keyframes pulseGlow {
+            0% { transform: scale(0.96); box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 8px rgba(99, 102, 241, 0); }
+            100% { transform: scale(0.96); box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+        }
+        .pulse-active {
+            animation: pulseGlow 1.8s infinite ease-in-out;
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col selection:bg-zinc-700 selection:text-white">
@@ -64,23 +110,14 @@
                         <span class="text-sm font-semibold tracking-tight text-zinc-100">AI Support Triaging & Auto-Fix</span>
                         <span class="text-[11px] font-mono text-zinc-400 px-1.5 py-0.5 rounded bg-zinc-800/80 border border-zinc-700/50">v3.0</span>
                     </div>
-                    <p class="text-[11px] text-zinc-400">Automatización de incidentes • Gemini Multi-Model Fallback • GitHub Actions Bot</p>
                 </div>
             </div>
 
             <!-- Controles y Telemetría -->
             <div class="flex items-center space-x-2 text-xs">
-                <div class="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-zinc-300 font-mono text-[11px]">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                    <span>gemini-3.8-flash <span class="text-zinc-500">(fallback: 3.5)</span></span>
-                </div>
-                <div class="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-zinc-400 font-mono text-[11px]">
-                    <span class="w-1.5 h-1.5 rounded-full bg-zinc-400"></span>
-                    <span>SQLite WAL</span>
-                </div>
                 <button id="toggle-poll-btn" onclick="toggleAutoPoll()" class="px-2.5 py-1 rounded-md bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 transition flex items-center gap-1.5 text-xs">
                     <i data-lucide="refresh-cw" id="poll-icon" class="w-3 h-3 text-zinc-400 animate-spin"></i>
-                    <span id="poll-label" class="font-mono text-[11px]">Sync (2s)</span>
+                    <span id="poll-label" class="font-mono text-[11px]">Sync</span>
                 </button>
             </div>
 
@@ -179,34 +216,8 @@
                         <span class="text-[10px] font-mono text-zinc-500">POST /api/v1/tickets</span>
                     </div>
 
-                    <!-- Botones de Prueba Rápida en 1 Clic -->
-                    <div class="space-y-1">
-                        <label class="text-[10.5px] font-medium text-zinc-400">Escenarios de Prueba en 1 Clic:</label>
-                        <div class="grid grid-cols-2 gap-1.5 text-xs">
-                            <button onclick="fillPreset('autofix_button')" class="text-left p-1.5 rounded-md bg-zinc-950 hover:bg-zinc-800/80 border border-zinc-800 text-zinc-300 transition text-[11px]">
-                                <div class="font-medium text-indigo-300 text-[10.5px]">🚀 Auto-Fix (PR)</div>
-                                <div class="text-[9.5px] text-zinc-500 truncate">Botón Colaborador</div>
-                            </button>
-
-                            <button onclick="fillPreset('ceo_bug')" class="text-left p-1.5 rounded-md bg-zinc-950 hover:bg-zinc-800/80 border border-zinc-800 text-zinc-300 transition text-[11px]">
-                                <div class="font-medium text-zinc-200 text-[10.5px]">👤 Bug Manual</div>
-                                <div class="text-[9.5px] text-zinc-500 truncate">Eliminar CEO (Issue #)</div>
-                            </button>
-
-                            <button onclick="fillPreset('oper_question')" class="text-left p-1.5 rounded-md bg-zinc-950 hover:bg-zinc-800/80 border border-zinc-800 text-zinc-300 transition text-[11px]">
-                                <div class="font-medium text-zinc-200 text-[10.5px]">💬 Duda Operativa</div>
-                                <div class="text-[9.5px] text-zinc-500 truncate">Exportar PDF</div>
-                            </button>
-
-                            <button onclick="fillPreset('feature_req')" class="text-left p-1.5 rounded-md bg-zinc-950 hover:bg-zinc-800/80 border border-zinc-800 text-zinc-300 transition text-[11px]">
-                                <div class="font-medium text-zinc-200 text-[10.5px]">💡 Feature Request</div>
-                                <div class="text-[9.5px] text-zinc-500 truncate">Atajos de Teclado</div>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Formulario de Ingesta -->
-                    <form id="create-ticket-form" onsubmit="handleCreateTicket(event)" class="space-y-2 pt-0.5">
+                    <!-- Formulario de Ingesta (Clasificación 100% Automática por la IA) -->
+                    <form id="create-ticket-form" onsubmit="handleCreateTicket(event)" class="space-y-2.5 pt-0.5">
                         <div class="grid grid-cols-2 gap-2">
                             <div>
                                 <label class="text-[10px] text-zinc-400 block mb-0.5">Canal de Origen</label>
@@ -224,13 +235,18 @@
                         </div>
 
                         <div>
-                            <label class="text-[10px] text-zinc-400 block mb-0.5">Descripción del Incidente</label>
-                            <textarea id="input-message" rows="2" required placeholder="Describe el problema técnico o la consulta..." class="w-full bg-zinc-950 border border-zinc-800 rounded-md p-2 text-xs text-zinc-200 focus:outline-none focus:border-zinc-500 transition resize-none"></textarea>
+                            <label class="text-[10px] text-zinc-400 block mb-0.5">Descripción del Requerimiento</label>
+                            <textarea id="input-message" rows="4" required placeholder="Describe el problema técnico, duda operativa o cambio... La IA lo analizará y clasificará automáticamente." class="w-full bg-zinc-950 border border-zinc-800 rounded-md p-2 text-xs text-zinc-200 focus:outline-none focus:border-zinc-500 transition resize-none"></textarea>
+                        </div>
+
+                        <div class="p-2 rounded-md bg-zinc-950/80 border border-zinc-800/80 flex items-center gap-2 text-[10.5px] text-zinc-400">
+                            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-indigo-400 shrink-0"></i>
+                            <span>Clasificación y triage autónomo con Gemini (Bug, Feature, Duda & Auto-Fix).</span>
                         </div>
 
                         <button type="submit" id="submit-ticket-btn" class="w-full py-1.5 px-3 rounded-md bg-zinc-100 hover:bg-white text-zinc-900 font-medium text-xs transition flex items-center justify-center gap-1.5 shadow-sm">
                             <i data-lucide="send" class="w-3.5 h-3.5"></i>
-                            <span>Ingestar Incidente</span>
+                            <span>Ingestar Requerimiento</span>
                         </button>
                     </form>
 
@@ -327,8 +343,12 @@
         <div class="bg-surface-900 border border-zinc-800 rounded-xl max-w-xl w-full max-h-[85vh] overflow-hidden flex flex-col shadow-2xl">
             <div class="p-4 border-b border-zinc-800 flex items-center justify-between">
                 <div>
-                    <h3 class="text-xs font-semibold text-zinc-200 font-mono" id="modal-ticket-id">Ticket</h3>
-                    <p class="text-[11px] text-zinc-400" id="modal-ticket-meta">Canal • Cliente • Fecha</p>
+                    <h3 class="text-xs font-semibold uppercase tracking-wider text-zinc-100 flex items-center gap-1.5">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-indigo-400"></i>
+                        <span>Detalle del Ticket Activo</span>
+                    </h3>
+                    <p class="text-[11px] font-mono text-zinc-400 mt-0.5" id="modal-ticket-id">Ticket</p>
+                    <p class="text-[10px] text-zinc-500 mt-0.5" id="modal-ticket-meta">Canal • Cliente • Fecha</p>
                 </div>
                 <button onclick="closeModal()" class="w-7 h-7 rounded-md bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white flex items-center justify-center transition">
                     <i data-lucide="x" class="w-3.5 h-3.5"></i>
@@ -354,37 +374,6 @@
         let isPolling = true;
         let pollInterval = null;
         let ticketsList = [];
-
-        const PRESETS = {
-            autofix_button: {
-                channel: 'webform',
-                customer: 'cliente_qa',
-                message: "En el ABM de personal, cambiar el texto del botón 'Nuevo Usuario' por 'Agregar Colaborador'"
-            },
-            ceo_bug: {
-                channel: 'webform',
-                customer: 'acme_sa',
-                message: 'Error 500 al intentar eliminar el usuario CEO en el módulo de organigrama de Acme Tecnología S.A.'
-            },
-            oper_question: {
-                channel: 'whatsapp',
-                customer: 'usuario_final',
-                message: 'Hola, ¿cómo hago para exportar el gráfico del organigrama a formato PDF?'
-            },
-            feature_req: {
-                channel: 'helpdesk',
-                customer: 'equipo_qa',
-                message: 'Sería muy útil poder colapsar y expandir ramas enteras del organigrama con atajos de teclado.'
-            }
-        };
-
-        function fillPreset(key) {
-            const p = PRESETS[key];
-            if (!p) return;
-            document.getElementById('input-channel').value = p.channel;
-            document.getElementById('input-customer').value = p.customer;
-            document.getElementById('input-message').value = p.message;
-        }
 
         async function fetchTickets() {
             try {
@@ -700,6 +689,149 @@
             stream.innerHTML = `<div class="py-1 border-b border-zinc-800/40">${thought}</div>` + stream.innerHTML;
         }
 
+        function getModalPipelineStepperHtml(t) {
+            const s1 = { 
+                icon: 'inbox', 
+                label: '1. Ingesta', 
+                sub: t.source_channel || 'webform', 
+                circle: 'bg-emerald-950/80 border-emerald-500 text-emerald-400',
+                iconColor: 'text-emerald-400'
+            };
+
+            let s2 = { icon: 'sparkles', label: '2. Triage IA', sub: 'En cola', circle: 'bg-zinc-900 border-zinc-800 text-zinc-600', iconColor: 'text-zinc-600', pulse: false };
+            let s3 = { icon: 'git-branch', label: '3. Sync GH/Jira', sub: 'En espera', circle: 'bg-zinc-900 border-zinc-800 text-zinc-600', iconColor: 'text-zinc-600', pulse: false };
+            let s4 = { icon: 'bot', label: '4. Resolución', sub: 'En espera', circle: 'bg-zinc-900 border-zinc-800 text-zinc-600', iconColor: 'text-zinc-600', pulse: false };
+
+            let c1Class = 'bg-zinc-800 beam-flow-1';
+            let c2Class = 'bg-zinc-800 beam-flow-2';
+            let c3Class = 'bg-zinc-800 beam-flow-3';
+
+            if (t.status === 'PENDING') {
+                c1Class = 'bg-indigo-950/80 beam-flow-1';
+                s2.circle = 'bg-indigo-950/80 border-indigo-500 text-indigo-300';
+                s2.icon = 'loader-2';
+                s2.iconColor = 'text-indigo-400 animate-spin';
+                s2.sub = 'Analizando...';
+                s2.pulse = true;
+            } else if (t.status === 'FAILED') {
+                c1Class = 'bg-emerald-950/80 beam-flow-1 beam-emerald';
+                s2.circle = 'bg-rose-950/80 border-rose-500 text-rose-300';
+                s2.icon = 'alert-triangle';
+                s2.iconColor = 'text-rose-400';
+                s2.sub = 'Fallo LLM';
+                c2Class = 'bg-zinc-800 opacity-40';
+                c3Class = 'bg-zinc-800 opacity-40';
+                s4.circle = 'bg-rose-950/80 border-rose-500 text-rose-300';
+                s4.icon = 'refresh-cw';
+                s4.iconColor = 'text-rose-400';
+                s4.sub = 'Reintento';
+            } else {
+                // TRIAGED, OPEN, AUTO_FIXING, RESOLVED
+                c1Class = 'bg-emerald-950/80 beam-flow-1 beam-emerald';
+                const typeStr = t.triage_result?.type ? t.triage_result.type.replace('_', ' ') : 'Clasificado';
+                s2.circle = 'bg-emerald-950/80 border-emerald-500 text-emerald-400';
+                s2.icon = 'check';
+                s2.iconColor = 'text-emerald-400';
+                s2.sub = typeStr;
+
+                c2Class = 'bg-emerald-950/80 beam-flow-2 beam-emerald';
+                if (t.github_issue_number || t.jira_key) {
+                    s3.circle = 'bg-emerald-950/80 border-emerald-500 text-emerald-400';
+                    s3.icon = 'check';
+                    s3.iconColor = 'text-emerald-400';
+                    s3.sub = `#${t.github_issue_number || ''} ${t.jira_key || ''}`.trim();
+                } else if (t.status === 'RESOLVED') {
+                    s3.circle = 'bg-emerald-950/80 border-emerald-500 text-emerald-400';
+                    s3.icon = 'check';
+                    s3.iconColor = 'text-emerald-400';
+                    s3.sub = 'Directo';
+                }
+
+                if (t.status === 'AUTO_FIXING') {
+                    c3Class = 'bg-indigo-950/80 beam-flow-3';
+                    s4.circle = 'bg-indigo-950/80 border-indigo-500 text-indigo-300';
+                    s4.icon = 'cpu';
+                    s4.iconColor = 'text-indigo-400 animate-pulse';
+                    s4.sub = 'Auto-PR en camino';
+                    s4.pulse = true;
+                } else if (t.status === 'OPEN') {
+                    c3Class = 'bg-sky-950/80 beam-flow-3';
+                    s4.circle = 'bg-sky-950/80 border-sky-500 text-sky-300';
+                    s4.icon = 'user-check';
+                    s4.iconColor = 'text-sky-400';
+                    s4.sub = 'Ingeniería';
+                } else if (t.status === 'RESOLVED') {
+                    c3Class = 'bg-emerald-950/80 beam-flow-3 beam-emerald';
+                    s4.circle = 'bg-emerald-950/80 border-emerald-500 text-emerald-400';
+                    s4.icon = 'check-circle-2';
+                    s4.iconColor = 'text-emerald-400';
+                    s4.sub = 'Resuelto';
+                }
+            }
+
+            return `
+                <div class="p-3.5 rounded-lg bg-zinc-950 border border-zinc-800 space-y-2.5">
+                    <div class="flex items-center justify-between pb-2 border-b border-zinc-800/80">
+                        <span class="text-[10px] font-mono text-zinc-400 uppercase font-semibold flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                            <span>Pipeline Autónomo: Secuencia Activa</span>
+                        </span>
+                        <span class="text-[10px] font-mono text-zinc-400">${t.status}</span>
+                    </div>
+
+                    <!-- Pipeline horizontal interactivo con animación secuencial de haces de luz -->
+                    <div class="flex items-center justify-between px-2 pt-1 pb-1">
+                        
+                        <!-- Paso 1: Ingesta -->
+                        <div class="flex flex-col items-center text-center w-20 shrink-0">
+                            <div class="w-7 h-7 rounded-full border ${s1.circle} flex items-center justify-center transition">
+                                <i data-lucide="${s1.icon}" class="w-3.5 h-3.5 ${s1.iconColor}"></i>
+                            </div>
+                            <span class="text-[10px] font-semibold text-zinc-200 mt-1">${s1.label}</span>
+                            <span class="text-[9px] font-mono text-zinc-500 truncate max-w-[75px]">${escapeHtml(s1.sub)}</span>
+                        </div>
+
+                        <!-- Conector 1 -> 2 (Haz 0s - 0.6s) -->
+                        <div class="flex-1 h-1 mx-2 rounded-full beam-connector ${c1Class}"></div>
+
+                        <!-- Paso 2: Triage IA -->
+                        <div class="flex flex-col items-center text-center w-24 shrink-0">
+                            <div class="w-7 h-7 rounded-full border ${s2.circle} ${s2.pulse ? 'pulse-active' : ''} flex items-center justify-center transition">
+                                <i data-lucide="${s2.icon}" class="w-3.5 h-3.5 ${s2.iconColor}"></i>
+                            </div>
+                            <span class="text-[10px] font-semibold text-zinc-200 mt-1">${s2.label}</span>
+                            <span class="text-[9px] font-mono text-zinc-500 truncate max-w-[90px]">${escapeHtml(s2.sub)}</span>
+                        </div>
+
+                        <!-- Conector 2 -> 3 (Haz 0.6s - 1.2s) -->
+                        <div class="flex-1 h-1 mx-2 rounded-full beam-connector ${c2Class}"></div>
+
+                        <!-- Paso 3: Sync GH/Jira -->
+                        <div class="flex flex-col items-center text-center w-24 shrink-0">
+                            <div class="w-7 h-7 rounded-full border ${s3.circle} ${s3.pulse ? 'pulse-active' : ''} flex items-center justify-center transition">
+                                <i data-lucide="${s3.icon}" class="w-3.5 h-3.5 ${s3.iconColor}"></i>
+                            </div>
+                            <span class="text-[10px] font-semibold text-zinc-200 mt-1">${s3.label}</span>
+                            <span class="text-[9px] font-mono text-zinc-500 truncate max-w-[90px]">${escapeHtml(s3.sub)}</span>
+                        </div>
+
+                        <!-- Conector 3 -> 4 (Haz 1.2s - 1.8s) -->
+                        <div class="flex-1 h-1 mx-2 rounded-full beam-connector ${c3Class}"></div>
+
+                        <!-- Paso 4: Auto-Fix / Resolución -->
+                        <div class="flex flex-col items-center text-center w-24 shrink-0">
+                            <div class="w-7 h-7 rounded-full border ${s4.circle} ${s4.pulse ? 'pulse-active' : ''} flex items-center justify-center transition">
+                                <i data-lucide="${s4.icon}" class="w-3.5 h-3.5 ${s4.iconColor}"></i>
+                            </div>
+                            <span class="text-[10px] font-semibold text-zinc-200 mt-1">${s4.label}</span>
+                            <span class="text-[9px] font-mono text-zinc-500 truncate max-w-[90px]">${escapeHtml(s4.sub)}</span>
+                        </div>
+
+                    </div>
+                </div>
+            `;
+        }
+
         function inspectTicket(ticketId) {
             const ticket = ticketsList.find(t => t.id === ticketId);
             if (!ticket) return;
@@ -711,6 +843,9 @@
             const tr = ticket.triage_result;
 
             content.innerHTML = `
+                <!-- Stepper Visual Animado: Flujo Paso a Paso Secuencial -->
+                ${getModalPipelineStepperHtml(ticket)}
+
                 <!-- Estado y Sincronización Externa -->
                 <div class="grid grid-cols-2 gap-3">
                     <div class="p-3 rounded-md bg-zinc-950 border border-zinc-800">
@@ -822,7 +957,7 @@
             const label = document.getElementById('poll-label');
             if (isPolling) {
                 icon.classList.add('animate-spin');
-                label.textContent = "Sync (2s)";
+                label.textContent = "Sync";
                 startPolling();
             } else {
                 icon.classList.remove('animate-spin');
