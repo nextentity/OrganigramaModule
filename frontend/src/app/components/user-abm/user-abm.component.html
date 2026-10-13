@@ -44,7 +44,7 @@
         <tr>
           <th style="width: 75px;">ID</th>
           <th style="width: 125px;">Nivel</th>
-          <th>Colaborador</th>
+          <th>Nombre y Apellido</th>
           <th>Correo Electrónico</th>
           <th>DNI / Identificación</th>
           <th>Jefe Directo</th>
@@ -139,7 +139,7 @@
   <!-- Diálogo Modal: Crear / Editar Usuario con Diseño Moderno y Minimalista -->
   <p-dialog 
     [(visible)]="displayUserModal" 
-    [header]="isEditing ? 'Editar Colaborador' : 'Registrar Nuevo Colaborador'" 
+    [header]="isEditing ? 'Editar Nombre y Apellido' : 'Registrar Nuevo Nombre y Apellido'" 
     [modal]="true" 
     [style]="{ width: '92vw', maxWidth: '580px' }"
     [contentStyle]="{ 'overflow-y': 'auto', 'max-height': '75vh' }"
@@ -227,7 +227,7 @@
       <button 
         pButton 
         type="button"
-        [label]="isEditing ? 'Guardar Cambios' : 'Registrar Colaborador'" 
+        [label]="isEditing ? 'Guardar Cambios' : 'Registrar Nombre y Apellido'" 
         icon="pi pi-check" 
         class="btn-primary btn-sm" 
         (click)="saveUser()"
@@ -238,7 +238,7 @@
   <!-- Diálogo Modal: Eliminación Segura con Reasignación Jerárquica -->
   <p-dialog 
     [(visible)]="displayDeleteModal" 
-    header="Eliminar Colaborador del Organigrama" 
+    header="Eliminar Nombre y Apellido del Organigrama" 
     [modal]="true" 
     [style]="{ width: '92vw', maxWidth: '540px' }"
     [contentStyle]="{ 'overflow-y': 'auto', 'max-height': '75vh' }"
