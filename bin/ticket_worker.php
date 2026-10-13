@@ -29,15 +29,15 @@ $runOnce = isset($options['once']);
 $limit = isset($options['limit']) ? max(1, (int) $options['limit']) : 10;
 $sleepSeconds = isset($options['sleep']) ? max(1, (int) $options['sleep']) : 3;
 
-$repository = new PdoTicketRepository($pdo);
-$llmClient = StructuredLlmClient::fromEnvironment();
-$triageService = new LlmTriageService($llmClient);
-$gitHubClient = GitHubClient::fromEnvironment();
-$jiraClient = JiraClient::fromEnvironment();
-
 $logger = static function (string $message): void {
     fwrite(STDOUT, sprintf("[%s] %s\n", date('Y-m-d H:i:s'), $message));
 };
+
+$repository = new PdoTicketRepository($pdo);
+$llmClient = StructuredLlmClient::fromEnvironment(logger: $logger);
+$triageService = new LlmTriageService($llmClient);
+$gitHubClient = GitHubClient::fromEnvironment();
+$jiraClient = JiraClient::fromEnvironment();
 
 $orchestrator = new TicketOrchestratorService(
     ticketRepository: $repository,
@@ -47,10 +47,14 @@ $orchestrator = new TicketOrchestratorService(
     logger: $logger,
 );
 
+$fallbackList = $llmClient->fallbackModels();
+$fallbackChainStr = $fallbackList !== [] ? implode(' ➔ ', $fallbackList) : 'ninguno';
+
 $logger('=====================================================');
 $logger('🚀 Worker de Triaging de Soporte Técnico Inicializado');
 $logger(sprintf('   Modo: %s | Batch Limit: %d | SQLite WAL Activo', $runOnce ? 'One-Shot (--once)' : 'Daemon Continuo', $limit));
-$logger(sprintf('   LLM:    %s', (getenv('LLM_API_KEY') ?: '') !== '' ? '✔ Activo (API Key detectada)' : '⚠ Modo Mock (LLM_API_KEY no configurada)'));
+$logger(sprintf('   LLM:    %s | Modelo: %s', (getenv('LLM_API_KEY') ?: '') !== '' ? '✔ Activo' : '⚠ Modo Mock', $llmClient->model()));
+$logger(sprintf('   Cadena de Fallback: %s', $fallbackChainStr));
 $logger(sprintf('   GitHub: %s (%s/%s)', $gitHubClient->isConfigured() ? '✔ Activo (GITHUB_TOKEN configurado)' : '⚠ Modo Mock (Falta GITHUB_TOKEN)', getenv('GITHUB_OWNER') ?: 'nextentity', getenv('GITHUB_REPO') ?: 'OrganigramaModule'));
 $logger(sprintf('   Jira:   %s', $jiraClient->isConfigured() ? '✔ Activo (Jira API Token configurado)' : '⚠ Modo Mock (Falta JIRA_API_TOKEN)'));
 $logger('=====================================================');
