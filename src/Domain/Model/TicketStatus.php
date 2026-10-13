@@ -37,7 +37,7 @@ enum TicketStatus: string
 
         return match ($this) {
             self::PENDING => in_array($target, [self::TRIAGED, self::OPEN, self::AUTO_FIXING, self::RESOLVED, self::FAILED], true),
-            self::TRIAGED => in_array($target, [self::OPEN, self::AUTO_FIXING, self::RESOLVED, self::FAILED], true),
+            self::TRIAGED => in_array($target, [self::PENDING, self::OPEN, self::AUTO_FIXING, self::RESOLVED, self::FAILED], true),
             self::AUTO_FIXING => in_array($target, [self::OPEN, self::RESOLVED, self::FAILED], true),
             self::OPEN => in_array($target, [self::AUTO_FIXING, self::RESOLVED, self::FAILED], true),
             self::RESOLVED, self::FAILED => false,

@@ -187,16 +187,16 @@ final class Ticket
     }
 
     /**
-     * Permite reencolar un ticket en FAILED para reintentar su procesamiento.
+     * Permite reencolar un ticket en FAILED o interrumpido en TRIAGED para reintentar su procesamiento.
      */
     public function retry(): void
     {
-        if ($this->status !== TicketStatus::FAILED) {
+        if ($this->status !== TicketStatus::FAILED && $this->status !== TicketStatus::TRIAGED) {
             throw new InvalidTicketTransitionException(
                 $this->id,
                 $this->status->value,
                 TicketStatus::PENDING->value,
-                'Solo se pueden reintentar tickets en estado FAILED.',
+                'Solo se pueden reintentar tickets en estado FAILED o no completados.',
             );
         }
 

@@ -59,6 +59,16 @@ $logger(sprintf('   GitHub: %s (%s/%s)', $gitHubClient->isConfigured() ? '✔ Ac
 $logger(sprintf('   Jira:   %s', $jiraClient->isConfigured() ? '✔ Activo (Jira API Token configurado)' : '⚠ Modo Mock (Falta JIRA_API_TOKEN)'));
 $logger('=====================================================');
 
+// Recuperación defensiva: tickets que quedaron en TRIAGED sin resultado tras reinicio o kill del contenedor
+try {
+    $recovered = $pdo->exec("UPDATE support_tickets SET status = 'PENDING' WHERE status = 'TRIAGED' AND triage_result IS NULL");
+    if ($recovered !== false && $recovered > 0) {
+        $logger(sprintf('🔄 [Recovery] %d ticket(s) en vuelo interrumpidos reencolados a PENDING para reintento.', $recovered));
+    }
+} catch (Throwable) {
+    // Modo tolerante
+}
+
 $running = true;
 if (function_exists('pcntl_signal')) {
     pcntl_async_signals(true);
