@@ -87,142 +87,130 @@
         </div>
     </header>
 
-    <!-- Contenedor Principal -->
-    <main class="max-w-7xl mx-auto px-6 py-6 flex-1 w-full space-y-6">
+    <!-- Contenedor Principal (Compacto para evitar scroll vertical innecesario) -->
+    <main class="max-w-7xl mx-auto px-6 py-4 flex-1 w-full space-y-3.5">
 
-        <!-- Banner Explicativo: Flujo Autónomo de 4 Etapas (Claro para cualquier persona externa) -->
-        <section class="bg-surface-900 border border-zinc-800/80 rounded-xl p-4 sm:p-5 space-y-3">
-            <div class="flex items-center justify-between pb-2.5 border-b border-zinc-800/60">
+        <!-- Banner Explicativo: Flujo Autónomo de 4 Etapas (Diseño Horizontal Compacto) -->
+        <section class="bg-surface-900 border border-zinc-800/80 rounded-xl p-3 space-y-2">
+            <div class="flex items-center justify-between pb-1.5 border-b border-zinc-800/60">
                 <div class="flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <h2 class="text-xs font-semibold uppercase tracking-wider text-zinc-200">Flujo Autónomo de Resolución de Incidentes</h2>
+                    <h2 class="text-xs font-semibold uppercase tracking-wider text-zinc-200">Pipeline Autónomo de Soporte con IA</h2>
                 </div>
-                <span class="text-[11px] font-mono text-zinc-500 hidden sm:inline">Pipeline autónomo de ingeniería • 0 fricción manual</span>
+                <span class="text-[10px] font-mono text-zinc-500 hidden sm:inline">4 etapas de automatización • 0 fricción manual</span>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
                 <!-- Paso 1 -->
-                <div class="p-3 rounded-lg bg-zinc-950 border border-zinc-800 flex flex-col justify-between space-y-1.5">
-                    <div class="flex items-center justify-between text-zinc-400">
-                        <span class="font-mono text-[10px] text-zinc-500 font-semibold">PASO 01</span>
-                        <i data-lucide="inbox" class="w-3.5 h-3.5 text-zinc-400"></i>
-                    </div>
-                    <div>
-                        <div class="font-semibold text-zinc-200 text-xs">1. Ingesta Multicanal</div>
-                        <p class="text-[11px] text-zinc-400 mt-0.5 leading-snug">Recepción 24/7 vía Webform, WhatsApp o API REST. Almacenamiento seguro en SQLite WAL.</p>
+                <div class="p-2 rounded-lg bg-zinc-950 border border-zinc-800 flex items-center gap-2.5">
+                    <div class="p-1.5 rounded bg-zinc-900 text-zinc-400 shrink-0"><i data-lucide="inbox" class="w-3.5 h-3.5"></i></div>
+                    <div class="overflow-hidden">
+                        <div class="font-semibold text-zinc-200 text-[11px] truncate">1. Ingesta Multicanal</div>
+                        <p class="text-[10px] text-zinc-400 truncate">Webform, WhatsApp, API REST</p>
                     </div>
                 </div>
 
                 <!-- Paso 2 -->
-                <div class="p-3 rounded-lg bg-zinc-950 border border-zinc-800 flex flex-col justify-between space-y-1.5">
-                    <div class="flex items-center justify-between text-zinc-400">
-                        <span class="font-mono text-[10px] text-indigo-400 font-semibold">PASO 02</span>
-                        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-indigo-400"></i>
-                    </div>
-                    <div>
-                        <div class="font-semibold text-zinc-200 text-xs">2. Triage IA con Gemini</div>
-                        <p class="text-[11px] text-zinc-400 mt-0.5 leading-snug">Clasificación de tipo (Bug, Feature, Duda), severidad y detección de si es auto-reparable.</p>
+                <div class="p-2 rounded-lg bg-zinc-950 border border-zinc-800 flex items-center gap-2.5">
+                    <div class="p-1.5 rounded bg-zinc-900 text-indigo-400 shrink-0"><i data-lucide="sparkles" class="w-3.5 h-3.5"></i></div>
+                    <div class="overflow-hidden">
+                        <div class="font-semibold text-zinc-200 text-[11px] truncate">2. Triage IA con Gemini</div>
+                        <p class="text-[10px] text-zinc-400 truncate">Bug, Feature, Duda & Auto-Fix</p>
                     </div>
                 </div>
 
                 <!-- Paso 3 -->
-                <div class="p-3 rounded-lg bg-zinc-950 border border-zinc-800 flex flex-col justify-between space-y-1.5">
-                    <div class="flex items-center justify-between text-zinc-400">
-                        <span class="font-mono text-[10px] text-sky-400 font-semibold">PASO 03</span>
-                        <i data-lucide="git-branch" class="w-3.5 h-3.5 text-sky-400"></i>
-                    </div>
-                    <div>
-                        <div class="font-semibold text-zinc-200 text-xs">3. Sync GitHub & Jira</div>
-                        <p class="text-[11px] text-zinc-400 mt-0.5 leading-snug">Apertura inmediata del Issue en GitHub y creación de tarjeta Jira con enlace bidireccional.</p>
+                <div class="p-2 rounded-lg bg-zinc-950 border border-zinc-800 flex items-center gap-2.5">
+                    <div class="p-1.5 rounded bg-zinc-900 text-sky-400 shrink-0"><i data-lucide="git-branch" class="w-3.5 h-3.5"></i></div>
+                    <div class="overflow-hidden">
+                        <div class="font-semibold text-zinc-200 text-[11px] truncate">3. Sync GitHub & Jira</div>
+                        <p class="text-[10px] text-zinc-400 truncate">Issue # y tarjeta Jira enlazados</p>
                     </div>
                 </div>
 
                 <!-- Paso 4 -->
-                <div class="p-3 rounded-lg bg-zinc-950 border border-zinc-800 flex flex-col justify-between space-y-1.5">
-                    <div class="flex items-center justify-between text-zinc-400">
-                        <span class="font-mono text-[10px] text-emerald-400 font-semibold">PASO 04</span>
-                        <i data-lucide="bot" class="w-3.5 h-3.5 text-emerald-400"></i>
-                    </div>
-                    <div>
-                        <div class="font-semibold text-zinc-200 text-xs">4. Auto-Fix / Resolución</div>
-                        <p class="text-[11px] text-zinc-400 mt-0.5 leading-snug">GitHub Actions crea rama, aplica el parche y abre el PR; si es duda operativa, responde al instante.</p>
+                <div class="p-2 rounded-lg bg-zinc-950 border border-zinc-800 flex items-center gap-2.5">
+                    <div class="p-1.5 rounded bg-zinc-900 text-emerald-400 shrink-0"><i data-lucide="bot" class="w-3.5 h-3.5"></i></div>
+                    <div class="overflow-hidden">
+                        <div class="font-semibold text-zinc-200 text-[11px] truncate">4. Auto-Fix / Resolución</div>
+                        <p class="text-[10px] text-zinc-400 truncate">Auto-PR en Git o respuesta directa</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Métricas Principales (Diseño Uniforme y Limpio) -->
-        <section class="grid grid-cols-2 sm:grid-cols-5 gap-3" id="stats-grid">
-            <div class="bg-surface-900 border border-zinc-800/80 rounded-lg p-3.5 flex flex-col justify-between h-20">
-                <span class="text-xs text-zinc-400 font-medium">Total Ingestados</span>
-                <span class="text-xl font-bold font-mono text-zinc-100" id="stat-total">0</span>
+        <!-- Métricas Principales (Diseño Compacto) -->
+        <section class="grid grid-cols-2 sm:grid-cols-5 gap-2.5" id="stats-grid">
+            <div class="bg-surface-900 border border-zinc-800/80 rounded-lg p-2.5 flex flex-col justify-between h-16">
+                <span class="text-[11px] text-zinc-400 font-medium">Total Ingestados</span>
+                <span class="text-lg font-bold font-mono text-zinc-100" id="stat-total">0</span>
             </div>
 
-            <div class="bg-surface-900 border border-zinc-800/80 rounded-lg p-3.5 flex flex-col justify-between h-20">
-                <span class="text-xs text-zinc-400 font-medium">En Cola (Pendientes)</span>
-                <span class="text-xl font-bold font-mono text-amber-400/90" id="stat-pending">0</span>
+            <div class="bg-surface-900 border border-zinc-800/80 rounded-lg p-2.5 flex flex-col justify-between h-16">
+                <span class="text-[11px] text-zinc-400 font-medium">En Cola (Pendientes)</span>
+                <span class="text-lg font-bold font-mono text-amber-400/90" id="stat-pending">0</span>
             </div>
 
-            <div class="bg-surface-900 border border-zinc-800/80 rounded-lg p-3.5 flex flex-col justify-between h-20">
-                <span class="text-xs text-zinc-400 font-medium">Auto-Fixing (En PR)</span>
-                <span class="text-xl font-bold font-mono text-indigo-400" id="stat-autofix">0</span>
+            <div class="bg-surface-900 border border-zinc-800/80 rounded-lg p-2.5 flex flex-col justify-between h-16">
+                <span class="text-[11px] text-zinc-400 font-medium">Auto-Fixing (PR)</span>
+                <span class="text-lg font-bold font-mono text-indigo-400" id="stat-autofix">0</span>
             </div>
 
-            <div class="bg-surface-900 border border-zinc-800/80 rounded-lg p-3.5 flex flex-col justify-between h-20">
-                <span class="text-xs text-zinc-400 font-medium">Resueltos</span>
-                <span class="text-xl font-bold font-mono text-emerald-400/90" id="stat-resolved">0</span>
+            <div class="bg-surface-900 border border-zinc-800/80 rounded-lg p-2.5 flex flex-col justify-between h-16">
+                <span class="text-[11px] text-zinc-400 font-medium">Resueltos</span>
+                <span class="text-lg font-bold font-mono text-emerald-400/90" id="stat-resolved">0</span>
             </div>
 
-            <div class="bg-surface-900 border border-zinc-800/80 rounded-lg p-3.5 flex flex-col justify-between h-20">
-                <span class="text-xs text-zinc-400 font-medium">Fallidos</span>
-                <span class="text-xl font-bold font-mono text-rose-400/90" id="stat-failed">0</span>
+            <div class="bg-surface-900 border border-zinc-800/80 rounded-lg p-2.5 flex flex-col justify-between h-16">
+                <span class="text-[11px] text-zinc-400 font-medium">Fallidos</span>
+                <span class="text-lg font-bold font-mono text-rose-400/90" id="stat-failed">0</span>
             </div>
         </section>
 
         <!-- Cuadrícula Principal: Ingesta (Izquierda, 4 cols) + Cola de Incidentes con Cards Uniformes (Derecha, 8 cols) -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch lg:h-[720px]">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch lg:h-[550px]">
             
             <!-- Panel Izquierdo: Formulario de Ingesta & Registro de Actividad -->
-            <section class="lg:col-span-4 flex flex-col gap-4 lg:h-full">
+            <section class="lg:col-span-4 flex flex-col gap-3 lg:h-full">
                 
-                <div class="bg-surface-900 border border-zinc-800/80 rounded-xl p-5 space-y-4 shrink-0">
-                    <div class="flex items-center justify-between pb-3 border-b border-zinc-800/60">
+                <div class="bg-surface-900 border border-zinc-800/80 rounded-xl p-3.5 space-y-2.5 shrink-0">
+                    <div class="flex items-center justify-between pb-2 border-b border-zinc-800/60">
                         <h2 class="text-xs font-semibold uppercase tracking-wider text-zinc-300">Nuevo Incidente</h2>
                         <span class="text-[10px] font-mono text-zinc-500">POST /api/v1/tickets</span>
                     </div>
 
                     <!-- Botones de Prueba Rápida en 1 Clic -->
-                    <div class="space-y-1.5">
-                        <label class="text-[11px] font-medium text-zinc-400">Escenarios de Prueba en 1 Clic:</label>
+                    <div class="space-y-1">
+                        <label class="text-[10.5px] font-medium text-zinc-400">Escenarios de Prueba en 1 Clic:</label>
                         <div class="grid grid-cols-2 gap-1.5 text-xs">
-                            <button onclick="fillPreset('autofix_button')" class="text-left p-2 rounded-md bg-zinc-950 hover:bg-zinc-800/80 border border-zinc-800 text-zinc-300 transition text-[11px]">
-                                <div class="font-medium text-indigo-300">🚀 Auto-Fix (PR)</div>
-                                <div class="text-[10px] text-zinc-500 truncate">Botón Agregar Colaborador</div>
+                            <button onclick="fillPreset('autofix_button')" class="text-left p-1.5 rounded-md bg-zinc-950 hover:bg-zinc-800/80 border border-zinc-800 text-zinc-300 transition text-[11px]">
+                                <div class="font-medium text-indigo-300 text-[10.5px]">🚀 Auto-Fix (PR)</div>
+                                <div class="text-[9.5px] text-zinc-500 truncate">Botón Colaborador</div>
                             </button>
 
-                            <button onclick="fillPreset('ceo_bug')" class="text-left p-2 rounded-md bg-zinc-950 hover:bg-zinc-800/80 border border-zinc-800 text-zinc-300 transition text-[11px]">
-                                <div class="font-medium text-zinc-200">👤 Bug Manual</div>
-                                <div class="text-[10px] text-zinc-500 truncate">Eliminar CEO (Issue #)</div>
+                            <button onclick="fillPreset('ceo_bug')" class="text-left p-1.5 rounded-md bg-zinc-950 hover:bg-zinc-800/80 border border-zinc-800 text-zinc-300 transition text-[11px]">
+                                <div class="font-medium text-zinc-200 text-[10.5px]">👤 Bug Manual</div>
+                                <div class="text-[9.5px] text-zinc-500 truncate">Eliminar CEO (Issue #)</div>
                             </button>
 
-                            <button onclick="fillPreset('oper_question')" class="text-left p-2 rounded-md bg-zinc-950 hover:bg-zinc-800/80 border border-zinc-800 text-zinc-300 transition text-[11px]">
-                                <div class="font-medium text-zinc-200">💬 Duda Operativa</div>
-                                <div class="text-[10px] text-zinc-500 truncate">Exportar PDF (Respuesta)</div>
+                            <button onclick="fillPreset('oper_question')" class="text-left p-1.5 rounded-md bg-zinc-950 hover:bg-zinc-800/80 border border-zinc-800 text-zinc-300 transition text-[11px]">
+                                <div class="font-medium text-zinc-200 text-[10.5px]">💬 Duda Operativa</div>
+                                <div class="text-[9.5px] text-zinc-500 truncate">Exportar PDF</div>
                             </button>
 
-                            <button onclick="fillPreset('feature_req')" class="text-left p-2 rounded-md bg-zinc-950 hover:bg-zinc-800/80 border border-zinc-800 text-zinc-300 transition text-[11px]">
-                                <div class="font-medium text-zinc-200">💡 Feature Request</div>
-                                <div class="text-[10px] text-zinc-500 truncate">Atajos de Teclado (Jira)</div>
+                            <button onclick="fillPreset('feature_req')" class="text-left p-1.5 rounded-md bg-zinc-950 hover:bg-zinc-800/80 border border-zinc-800 text-zinc-300 transition text-[11px]">
+                                <div class="font-medium text-zinc-200 text-[10.5px]">💡 Feature Request</div>
+                                <div class="text-[9.5px] text-zinc-500 truncate">Atajos de Teclado</div>
                             </button>
                         </div>
                     </div>
 
                     <!-- Formulario de Ingesta -->
-                    <form id="create-ticket-form" onsubmit="handleCreateTicket(event)" class="space-y-3 pt-1">
+                    <form id="create-ticket-form" onsubmit="handleCreateTicket(event)" class="space-y-2 pt-0.5">
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="text-[11px] text-zinc-400 block mb-1">Canal de Origen</label>
-                                <select id="input-channel" class="w-full bg-zinc-950 border border-zinc-800 rounded-md px-2.5 py-1.5 text-xs text-zinc-200 focus:outline-none focus:border-zinc-500 transition font-mono">
+                                <label class="text-[10px] text-zinc-400 block mb-0.5">Canal de Origen</label>
+                                <select id="input-channel" class="w-full bg-zinc-950 border border-zinc-800 rounded-md px-2 py-1 text-xs text-zinc-200 focus:outline-none focus:border-zinc-500 transition font-mono">
                                     <option value="webform">webform</option>
                                     <option value="whatsapp">whatsapp</option>
                                     <option value="helpdesk">helpdesk</option>
@@ -230,28 +218,28 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="text-[11px] text-zinc-400 block mb-1">Cliente / Tenant ID</label>
-                                <input type="text" id="input-customer" required value="cliente_demo" class="w-full bg-zinc-950 border border-zinc-800 rounded-md px-2.5 py-1.5 text-xs text-zinc-200 focus:outline-none focus:border-zinc-500 transition font-mono" />
+                                <label class="text-[10px] text-zinc-400 block mb-0.5">Cliente / Tenant ID</label>
+                                <input type="text" id="input-customer" required value="cliente_demo" class="w-full bg-zinc-950 border border-zinc-800 rounded-md px-2 py-1 text-xs text-zinc-200 focus:outline-none focus:border-zinc-500 transition font-mono" />
                             </div>
                         </div>
 
                         <div>
-                            <label class="text-[11px] text-zinc-400 block mb-1">Descripción del Incidente</label>
-                            <textarea id="input-message" rows="3" required placeholder="Describe el problema técnico o la consulta..." class="w-full bg-zinc-950 border border-zinc-800 rounded-md p-2.5 text-xs text-zinc-200 focus:outline-none focus:border-zinc-500 transition resize-none"></textarea>
+                            <label class="text-[10px] text-zinc-400 block mb-0.5">Descripción del Incidente</label>
+                            <textarea id="input-message" rows="2" required placeholder="Describe el problema técnico o la consulta..." class="w-full bg-zinc-950 border border-zinc-800 rounded-md p-2 text-xs text-zinc-200 focus:outline-none focus:border-zinc-500 transition resize-none"></textarea>
                         </div>
 
-                        <button type="submit" id="submit-ticket-btn" class="w-full py-2 px-4 rounded-md bg-zinc-100 hover:bg-white text-zinc-900 font-medium text-xs transition flex items-center justify-center gap-1.5 shadow-sm">
+                        <button type="submit" id="submit-ticket-btn" class="w-full py-1.5 px-3 rounded-md bg-zinc-100 hover:bg-white text-zinc-900 font-medium text-xs transition flex items-center justify-center gap-1.5 shadow-sm">
                             <i data-lucide="send" class="w-3.5 h-3.5"></i>
                             <span>Ingestar Incidente</span>
                         </button>
                     </form>
 
-                    <div id="form-feedback" class="text-xs hidden rounded-md p-2.5 border"></div>
+                    <div id="form-feedback" class="text-xs hidden rounded-md p-2 border"></div>
                 </div>
 
                 <!-- Consola de Telemetría del Agente -->
-                <div class="bg-surface-900 border border-zinc-800/80 rounded-xl p-4 font-mono text-xs flex flex-col flex-1 min-h-[220px] lg:min-h-0 space-y-2">
-                    <div class="flex items-center justify-between pb-2 border-b border-zinc-800/60 text-zinc-400 shrink-0">
+                <div class="bg-surface-900 border border-zinc-800/80 rounded-xl p-3 font-mono text-xs flex flex-col flex-1 min-h-[160px] lg:min-h-0 space-y-1.5">
+                    <div class="flex items-center justify-between pb-1.5 border-b border-zinc-800/60 text-zinc-400 shrink-0">
                         <span class="text-[11px] font-semibold text-zinc-300 flex items-center gap-1.5">
                             <span class="w-1.5 h-1.5 rounded-full bg-zinc-400"></span>
                             <span>Registro de Actividad IA</span>
@@ -259,12 +247,12 @@
                         <span class="text-[10px] text-zinc-500">Live Telemetry</span>
                     </div>
 
-                    <div id="agent-thought-stream" class="space-y-1.5 flex-1 min-h-[140px] overflow-y-auto pr-1 text-[11px] leading-relaxed text-zinc-400">
+                    <div id="agent-thought-stream" class="space-y-1 flex-1 min-h-[100px] overflow-y-auto pr-1 text-[10.5px] leading-relaxed text-zinc-400">
                         <div class="text-zinc-600">Worker en segundo plano activo y escuchando eventos...</div>
                     </div>
 
                     <!-- Footer de Telemetría -->
-                    <div class="pt-2 border-t border-zinc-800/60 flex items-center justify-between text-[10px] text-zinc-500 shrink-0">
+                    <div class="pt-1.5 border-t border-zinc-800/60 flex items-center justify-between text-[10px] text-zinc-500 shrink-0">
                         <span class="flex items-center gap-1.5">
                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                             <span>Worker: Activo</span>
@@ -278,40 +266,52 @@
             <!-- Panel Derecho: Cola de Incidentes con Cards Uniformes y Paso a Paso Visual -->
             <section class="lg:col-span-8 flex flex-col lg:h-full">
 
-                <div class="bg-surface-900 border border-zinc-800/80 rounded-xl p-5 flex flex-col flex-1 min-h-0 space-y-4">
+                <div class="bg-surface-900 border border-zinc-800/80 rounded-xl p-3.5 flex flex-col flex-1 min-h-0 space-y-2.5">
                     
-                    <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-zinc-800/60 shrink-0">
+                    <div class="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-zinc-800/60 shrink-0">
                         <div>
                             <h2 class="text-xs font-semibold uppercase tracking-wider text-zinc-200">Cola de Incidentes Procesados</h2>
-                            <p class="text-[11px] text-zinc-400 mt-0.5">Estado en tiempo real de cada ticket a través del pipeline autónomo</p>
+                            <p class="text-[10.5px] text-zinc-400 mt-0.5">Mostrando 4 incidentes por vista con paginación y telemetría</p>
                         </div>
 
                         <!-- Filtros Minimalistas -->
                         <div class="flex items-center space-x-1 text-xs">
-                            <button onclick="setFilter('ALL')" class="filter-btn px-2.5 py-1 rounded text-[11px] bg-zinc-800 text-zinc-100 font-mono" data-filter="ALL">Todos</button>
-                            <button onclick="setFilter('PENDING')" class="filter-btn px-2.5 py-1 rounded text-[11px] text-zinc-400 hover:text-zinc-200 font-mono" data-filter="PENDING">Pendientes</button>
-                            <button onclick="setFilter('AUTO_FIXING')" class="filter-btn px-2.5 py-1 rounded text-[11px] text-zinc-400 hover:text-zinc-200 font-mono" data-filter="AUTO_FIXING">Auto-Fix</button>
-                            <button onclick="setFilter('OPEN')" class="filter-btn px-2.5 py-1 rounded text-[11px] text-zinc-400 hover:text-zinc-200 font-mono" data-filter="OPEN">Abiertos</button>
-                            <button onclick="setFilter('RESOLVED')" class="filter-btn px-2.5 py-1 rounded text-[11px] text-zinc-400 hover:text-zinc-200 font-mono" data-filter="RESOLVED">Resueltos</button>
-                            <button onclick="setFilter('FAILED')" class="filter-btn px-2.5 py-1 rounded text-[11px] text-zinc-400 hover:text-zinc-200 font-mono" data-filter="FAILED">Fallidos</button>
+                            <button onclick="setFilter('ALL')" class="filter-btn px-2 py-0.5 rounded text-[10.5px] bg-zinc-800 text-zinc-100 font-mono" data-filter="ALL">Todos</button>
+                            <button onclick="setFilter('PENDING')" class="filter-btn px-2 py-0.5 rounded text-[10.5px] text-zinc-400 hover:text-zinc-200 font-mono" data-filter="PENDING">Pendientes</button>
+                            <button onclick="setFilter('AUTO_FIXING')" class="filter-btn px-2 py-0.5 rounded text-[10.5px] text-zinc-400 hover:text-zinc-200 font-mono" data-filter="AUTO_FIXING">Auto-Fix</button>
+                            <button onclick="setFilter('OPEN')" class="filter-btn px-2 py-0.5 rounded text-[10.5px] text-zinc-400 hover:text-zinc-200 font-mono" data-filter="OPEN">Abiertos</button>
+                            <button onclick="setFilter('RESOLVED')" class="filter-btn px-2 py-0.5 rounded text-[10.5px] text-zinc-400 hover:text-zinc-200 font-mono" data-filter="RESOLVED">Resueltos</button>
+                            <button onclick="setFilter('FAILED')" class="filter-btn px-2 py-0.5 rounded text-[10.5px] text-zinc-400 hover:text-zinc-200 font-mono" data-filter="FAILED">Fallidos</button>
                         </div>
                     </div>
 
-                    <!-- Feed de Tickets en Grid de 2 Columnas de Altura Uniforme -->
-                    <div id="tickets-container" class="grid grid-cols-1 md:grid-cols-2 gap-3.5 flex-1 min-h-0 overflow-y-auto pr-1">
+                    <!-- Feed de Tickets en Grid de 2x2 (Exactamente 4 incidentes visibles) -->
+                    <div id="tickets-container" class="grid grid-cols-1 md:grid-cols-2 gap-2.5 flex-1 min-h-0 overflow-y-auto pr-1">
                         <div class="col-span-full text-center py-12 text-zinc-500 text-xs">
                             <i data-lucide="loader-2" class="w-5 h-5 animate-spin mx-auto mb-2 text-zinc-400"></i>
                             Cargando tickets desde SQLite...
                         </div>
                     </div>
 
-                    <!-- Footer de Cola de Incidentes Procesados (Alineado exactamente con el Footer de Telemetría) -->
-                    <div class="pt-3 border-t border-zinc-800/60 flex items-center justify-between text-[11px] font-mono text-zinc-500 shrink-0">
-                        <div class="flex items-center gap-1.5">
+                    <!-- Footer con Paginación y Contador (Alineado simétricamente con el Footer de Telemetría) -->
+                    <div class="pt-2 border-t border-zinc-800/60 flex items-center justify-between text-xs font-mono shrink-0">
+                        <div class="flex items-center gap-1.5 text-zinc-400 text-[10.5px]">
                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                            <span>Pipeline Autónomo sincronizado</span>
+                            <span id="tickets-pagination-info">0 incidentes</span>
                         </div>
-                        <span id="tickets-count-badge" class="text-zinc-400">0 incidentes</span>
+
+                        <!-- Controles de Paginación -->
+                        <div class="flex items-center gap-1.5">
+                            <button id="prev-page-btn" onclick="changePage(-1)" class="px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 disabled:opacity-30 disabled:hover:bg-zinc-900 border border-zinc-800 text-zinc-300 text-[10.5px] flex items-center gap-1 transition">
+                                <i data-lucide="chevron-left" class="w-3 h-3"></i>
+                                <span>Anterior</span>
+                            </button>
+                            <span id="page-indicator" class="px-2 text-zinc-400 text-[10.5px]">1 / 1</span>
+                            <button id="next-page-btn" onclick="changePage(1)" class="px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 disabled:opacity-30 disabled:hover:bg-zinc-900 border border-zinc-800 text-zinc-300 text-[10.5px] flex items-center gap-1 transition">
+                                <span>Siguiente</span>
+                                <i data-lucide="chevron-right" class="w-3 h-3"></i>
+                            </button>
+                        </div>
                     </div>
 
                 </div>
@@ -407,15 +407,51 @@
             document.getElementById('stat-failed').textContent = ticketsList.filter(t => t.status === 'FAILED').length;
         }
 
+        let currentPage = 1;
+        const ITEMS_PER_PAGE = 4;
+
+        function changePage(delta) {
+            currentPage += delta;
+            renderTickets();
+        }
+
         function renderTickets() {
             const container = document.getElementById('tickets-container');
             const filtered = currentFilter === 'ALL' 
                 ? ticketsList 
                 : ticketsList.filter(t => t.status === currentFilter);
 
-            const badge = document.getElementById('tickets-count-badge');
-            if (badge) {
-                badge.textContent = `${filtered.length} incidente${filtered.length === 1 ? '' : 's'}`;
+            const totalItems = filtered.length;
+            const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE) || 1;
+
+            if (currentPage > totalPages) currentPage = totalPages;
+            if (currentPage < 1) currentPage = 1;
+
+            // Actualizar controles de paginación
+            const paginationInfo = document.getElementById('tickets-pagination-info');
+            const pageIndicator = document.getElementById('page-indicator');
+            const prevBtn = document.getElementById('prev-page-btn');
+            const nextBtn = document.getElementById('next-page-btn');
+
+            if (paginationInfo) {
+                if (totalItems === 0) {
+                    paginationInfo.textContent = '0 incidentes';
+                } else {
+                    const start = (currentPage - 1) * ITEMS_PER_PAGE + 1;
+                    const end = Math.min(start + ITEMS_PER_PAGE - 1, totalItems);
+                    paginationInfo.textContent = `${start}-${end} de ${totalItems} incidentes`;
+                }
+            }
+
+            if (pageIndicator) {
+                pageIndicator.textContent = `${currentPage} / ${totalPages}`;
+            }
+
+            if (prevBtn) {
+                prevBtn.disabled = (currentPage <= 1);
+            }
+            if (nextBtn) {
+                nextBtn.disabled = (currentPage >= totalPages);
             }
 
             if (filtered.length === 0) {
@@ -427,7 +463,10 @@
                 return;
             }
 
-            container.innerHTML = filtered.map(t => {
+            const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+            const pageTickets = filtered.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+            container.innerHTML = pageTickets.map(t => {
                 const statusBadge = getStatusBadge(t.status);
                 const rawMsg = t.raw_payload?.message || t.raw_payload?.text || JSON.stringify(t.raw_payload);
                 const isFailed = t.status === 'FAILED';
@@ -435,15 +474,15 @@
                 const shortId = t.id.slice(0, 8);
 
                 return `
-                    <div class="p-3.5 rounded-lg bg-zinc-950 border border-zinc-800/80 hover:border-zinc-700 transition flex flex-col justify-between h-[230px] space-y-2.5">
+                    <div class="p-3 rounded-lg bg-zinc-950 border border-zinc-800/80 hover:border-zinc-700 transition flex flex-col justify-between h-[195px] space-y-2">
                         
                         <!-- 1. Cabecera de la Card (Canal + ID Corto + Badge Estado) -->
                         <div class="flex items-center justify-between gap-2 shrink-0">
                             <div class="flex items-center gap-1.5 overflow-hidden">
-                                <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-zinc-400 uppercase font-semibold shrink-0">
+                                <span class="text-[9.5px] font-mono px-1.5 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-zinc-400 uppercase font-semibold shrink-0">
                                     ${escapeHtml(t.source_channel)}
                                 </span>
-                                <span class="font-mono text-xs text-zinc-400 truncate" title="${escapeHtml(t.id)}">
+                                <span class="font-mono text-[11px] text-zinc-400 truncate" title="${escapeHtml(t.id)}">
                                     #${shortId}
                                 </span>
                             </div>
@@ -452,28 +491,28 @@
                             </div>
                         </div>
 
-                        <!-- 2. Cuerpo: Mensaje del Incidente (Exactamente 2 líneas para altura idéntica) -->
+                        <!-- 2. Cuerpo: Mensaje del Incidente (Exactamente 2 líneas con line-clamp) -->
                         <div class="flex-1 flex flex-col justify-center">
-                            <p class="text-xs text-zinc-300 line-clamp-2 leading-relaxed" title="${escapeHtml(rawMsg)}">
+                            <p class="text-xs text-zinc-300 line-clamp-2 leading-snug" title="${escapeHtml(rawMsg)}">
                                 ${escapeHtml(rawMsg)}
                             </p>
                         </div>
 
-                        <!-- 3. Mini-Stepper de 4 Pasos Automatizados (Misma altura en todas las cards) -->
+                        <!-- 3. Mini-Stepper de 4 Pasos Automatizados -->
                         <div class="shrink-0">
                             ${stepperHtml}
                         </div>
 
                         <!-- 4. Pie de la Card (Cliente + Acciones / Links) -->
-                        <div class="flex items-center justify-between text-[11px] text-zinc-500 pt-2 border-t border-zinc-800/60 shrink-0">
-                            <div class="flex items-center gap-2 truncate max-w-[150px]">
+                        <div class="flex items-center justify-between text-[10.5px] text-zinc-500 pt-1.5 border-t border-zinc-800/60 shrink-0">
+                            <div class="flex items-center gap-1.5 truncate max-w-[130px]">
                                 <i data-lucide="user" class="w-3 h-3 text-zinc-500 shrink-0"></i>
                                 <span class="truncate text-zinc-400 font-mono text-[10px]">${escapeHtml(t.customer_id)}</span>
                             </div>
 
-                            <div class="flex items-center gap-2 shrink-0">
+                            <div class="flex items-center gap-1.5 shrink-0">
                                 ${isFailed ? `
-                                    <button onclick="event.stopPropagation(); retryTicket('${t.id}')" class="px-2 py-0.5 rounded bg-zinc-800 hover:bg-zinc-700 text-rose-300 border border-rose-900/40 text-[10px] font-mono transition">
+                                    <button onclick="event.stopPropagation(); retryTicket('${t.id}')" class="px-2 py-0.5 rounded bg-zinc-800 hover:bg-zinc-700 text-rose-300 border border-rose-900/40 text-[9.5px] font-mono transition">
                                         Reintentar
                                     </button>
                                 ` : ''}
@@ -485,7 +524,7 @@
                                     </a>
                                 ` : ''}
 
-                                <button onclick="inspectTicket('${t.id}')" class="px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300 text-[11px] transition">
+                                <button onclick="inspectTicket('${t.id}')" class="px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300 text-[10px] transition">
                                     Detalle
                                 </button>
                             </div>
@@ -549,7 +588,7 @@
                 }
 
                 return `
-                    <div class="flex items-center gap-1.5 px-2 py-1 rounded border text-[10px] font-mono ${style} truncate">
+                    <div class="flex items-center gap-1 px-1.5 py-0.5 rounded border text-[9.5px] font-mono ${style} truncate">
                         <span class="w-1.5 h-1.5 rounded-full ${dot} shrink-0"></span>
                         <span class="truncate">${escapeHtml(step.label)}</span>
                     </div>
@@ -606,7 +645,8 @@
 
                 const data = await res.json();
                 if (res.status === 202) {
-                    feedback.className = "text-xs rounded-md p-2.5 bg-zinc-950 border border-zinc-700 text-zinc-300 block";
+                    currentPage = 1;
+                    feedback.className = "text-xs rounded-md p-2 bg-zinc-950 border border-zinc-700 text-zinc-300 block";
                     feedback.innerHTML = `✔ Ticket recibido (202 Accepted): <code class="font-mono text-zinc-100">${data.ticket_id}</code>. Procesando en segundo plano...`;
                     document.getElementById('input-message').value = '';
                     await fetchTickets();
@@ -765,11 +805,12 @@
 
         function setFilter(filter) {
             currentFilter = filter;
+            currentPage = 1;
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 if (btn.dataset.filter === filter) {
-                    btn.className = "filter-btn px-2.5 py-1 rounded text-[11px] bg-zinc-800 text-zinc-100 font-mono";
+                    btn.className = "filter-btn px-2 py-0.5 rounded text-[10.5px] bg-zinc-800 text-zinc-100 font-mono";
                 } else {
-                    btn.className = "filter-btn px-2.5 py-1 rounded text-[11px] text-zinc-400 hover:text-zinc-200 font-mono";
+                    btn.className = "filter-btn px-2 py-0.5 rounded text-[10.5px] text-zinc-400 hover:text-zinc-200 font-mono";
                 }
             });
             renderTickets();
