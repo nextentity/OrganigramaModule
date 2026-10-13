@@ -180,12 +180,12 @@
         </section>
 
         <!-- Cuadrícula Principal: Ingesta (Izquierda, 4 cols) + Cola de Incidentes con Cards Uniformes (Derecha, 8 cols) -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch lg:h-[720px]">
             
             <!-- Panel Izquierdo: Formulario de Ingesta & Registro de Actividad -->
-            <section class="lg:col-span-4 space-y-4">
+            <section class="lg:col-span-4 flex flex-col gap-4 lg:h-full">
                 
-                <div class="bg-surface-900 border border-zinc-800/80 rounded-xl p-5 space-y-4">
+                <div class="bg-surface-900 border border-zinc-800/80 rounded-xl p-5 space-y-4 shrink-0">
                     <div class="flex items-center justify-between pb-3 border-b border-zinc-800/60">
                         <h2 class="text-xs font-semibold uppercase tracking-wider text-zinc-300">Nuevo Incidente</h2>
                         <span class="text-[10px] font-mono text-zinc-500">POST /api/v1/tickets</span>
@@ -250,8 +250,8 @@
                 </div>
 
                 <!-- Consola de Telemetría del Agente -->
-                <div class="bg-surface-900 border border-zinc-800/80 rounded-xl p-4 font-mono text-xs space-y-2">
-                    <div class="flex items-center justify-between pb-2 border-b border-zinc-800/60 text-zinc-400">
+                <div class="bg-surface-900 border border-zinc-800/80 rounded-xl p-4 font-mono text-xs flex flex-col flex-1 min-h-[220px] lg:min-h-0 space-y-2">
+                    <div class="flex items-center justify-between pb-2 border-b border-zinc-800/60 text-zinc-400 shrink-0">
                         <span class="text-[11px] font-semibold text-zinc-300 flex items-center gap-1.5">
                             <span class="w-1.5 h-1.5 rounded-full bg-zinc-400"></span>
                             <span>Registro de Actividad IA</span>
@@ -259,19 +259,28 @@
                         <span class="text-[10px] text-zinc-500">Live Telemetry</span>
                     </div>
 
-                    <div id="agent-thought-stream" class="space-y-1.5 h-48 overflow-y-auto pr-1 text-[11px] leading-relaxed text-zinc-400">
+                    <div id="agent-thought-stream" class="space-y-1.5 flex-1 min-h-[140px] overflow-y-auto pr-1 text-[11px] leading-relaxed text-zinc-400">
                         <div class="text-zinc-600">Worker en segundo plano activo y escuchando eventos...</div>
+                    </div>
+
+                    <!-- Footer de Telemetría -->
+                    <div class="pt-2 border-t border-zinc-800/60 flex items-center justify-between text-[10px] text-zinc-500 shrink-0">
+                        <span class="flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                            <span>Worker: Activo</span>
+                        </span>
+                        <span>Polling: 3s</span>
                     </div>
                 </div>
 
             </section>
 
             <!-- Panel Derecho: Cola de Incidentes con Cards Uniformes y Paso a Paso Visual -->
-            <section class="lg:col-span-8 space-y-4">
+            <section class="lg:col-span-8 flex flex-col lg:h-full">
 
-                <div class="bg-surface-900 border border-zinc-800/80 rounded-xl p-5 space-y-4">
+                <div class="bg-surface-900 border border-zinc-800/80 rounded-xl p-5 flex flex-col flex-1 min-h-0 space-y-4">
                     
-                    <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-zinc-800/60">
+                    <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-zinc-800/60 shrink-0">
                         <div>
                             <h2 class="text-xs font-semibold uppercase tracking-wider text-zinc-200">Cola de Incidentes Procesados</h2>
                             <p class="text-[11px] text-zinc-400 mt-0.5">Estado en tiempo real de cada ticket a través del pipeline autónomo</p>
@@ -289,11 +298,20 @@
                     </div>
 
                     <!-- Feed de Tickets en Grid de 2 Columnas de Altura Uniforme -->
-                    <div id="tickets-container" class="grid grid-cols-1 md:grid-cols-2 gap-3.5 max-h-[750px] overflow-y-auto pr-1">
+                    <div id="tickets-container" class="grid grid-cols-1 md:grid-cols-2 gap-3.5 flex-1 min-h-0 overflow-y-auto pr-1">
                         <div class="col-span-full text-center py-12 text-zinc-500 text-xs">
                             <i data-lucide="loader-2" class="w-5 h-5 animate-spin mx-auto mb-2 text-zinc-400"></i>
                             Cargando tickets desde SQLite...
                         </div>
+                    </div>
+
+                    <!-- Footer de Cola de Incidentes Procesados (Alineado exactamente con el Footer de Telemetría) -->
+                    <div class="pt-3 border-t border-zinc-800/60 flex items-center justify-between text-[11px] font-mono text-zinc-500 shrink-0">
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                            <span>Pipeline Autónomo sincronizado</span>
+                        </div>
+                        <span id="tickets-count-badge" class="text-zinc-400">0 incidentes</span>
                     </div>
 
                 </div>
@@ -394,6 +412,11 @@
             const filtered = currentFilter === 'ALL' 
                 ? ticketsList 
                 : ticketsList.filter(t => t.status === currentFilter);
+
+            const badge = document.getElementById('tickets-count-badge');
+            if (badge) {
+                badge.textContent = `${filtered.length} incidente${filtered.length === 1 ? '' : 's'}`;
+            }
 
             if (filtered.length === 0) {
                 container.innerHTML = `
