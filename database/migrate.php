@@ -29,6 +29,20 @@ try {
 
     $executedStatements = $migrator->migrate();
 
+    // Sanitización retroactiva de tickets con API keys residuales en SQLite
+    try {
+        $checkStmt = $pdo->query("SELECT id, triage_result FROM support_tickets WHERE triage_result LIKE '%key=%' OR triage_result LIKE '%AIza%' OR triage_result LIKE '%AQ.%'");
+        if ($checkStmt) {
+            $updateStmt = $pdo->prepare('UPDATE support_tickets SET triage_result = :sanitized WHERE id = :id');
+            while ($row = $checkStmt->fetch(PDO::FETCH_ASSOC)) {
+                $sanitized = \App\Application\Service\TicketOrchestratorService::sanitizeMessage((string) $row['triage_result']);
+                $updateStmt->execute([':sanitized' => $sanitized, ':id' => $row['id']]);
+            }
+        }
+    } catch (Throwable) {
+        // Ignorar de forma defensiva si no existe la tabla
+    }
+
     fwrite(STDOUT, sprintf(
         "✔ Esquema aplicado en %s (%d sentencias)\n",
         DatabaseDriver::fromPdo($pdo)->value,

@@ -171,9 +171,8 @@ final class StructuredLlmClient implements LlmClientInterface
         }
 
         $endpoint = sprintf(
-            'https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s',
-            urlencode($model),
-            urlencode($this->apiKey)
+            'https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent',
+            urlencode($model)
         );
 
         $payload = [
@@ -199,7 +198,8 @@ final class StructuredLlmClient implements LlmClientInterface
         for ($attempt = 1; $attempt <= $maxRetries; $attempt++) {
             try {
                 $response = $client->post($endpoint, $payload, [
-                    'Content-Type' => 'application/json',
+                    'Content-Type'   => 'application/json',
+                    'x-goog-api-key' => $this->apiKey,
                 ]);
 
                 if (!$response->isSuccessful()) {
@@ -208,8 +208,9 @@ final class StructuredLlmClient implements LlmClientInterface
                         continue;
                     }
 
+                    $safeError = substr($response->body, 0, 300);
                     throw new RuntimeException(
-                        "Error al invocar Gemini LLM ({$response->statusCode}): " . substr($response->body, 0, 300)
+                        "Error al invocar Gemini LLM ({$response->statusCode}): {$safeError}"
                     );
                 }
 

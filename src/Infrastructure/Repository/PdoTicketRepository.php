@@ -154,7 +154,8 @@ final class PdoTicketRepository implements TicketRepositoryInterface
 
         $triageJson = $ticket->triageResult()?->toJson();
         if ($triageJson === null && $ticket->failureReason() !== null) {
-            $triageJson = (string) json_encode(['error' => $ticket->failureReason()], JSON_UNESCAPED_UNICODE);
+            $safeReason = \App\Application\Service\TicketOrchestratorService::sanitizeMessage($ticket->failureReason());
+            $triageJson = (string) json_encode(['error' => $safeReason], JSON_UNESCAPED_UNICODE);
         }
 
         $stmt->execute([
@@ -186,7 +187,7 @@ final class PdoTicketRepository implements TicketRepositoryInterface
         if (isset($row['triage_result']) && is_string($row['triage_result']) && trim($row['triage_result']) !== '') {
             $decoded = json_decode($row['triage_result'], true);
             if (is_array($decoded) && isset($decoded['error'])) {
-                $failureReason = (string) $decoded['error'];
+                $failureReason = \App\Application\Service\TicketOrchestratorService::sanitizeMessage((string) $decoded['error']);
             } elseif (is_array($decoded)) {
                 $triageResult = TriageResult::fromArray($decoded);
             }

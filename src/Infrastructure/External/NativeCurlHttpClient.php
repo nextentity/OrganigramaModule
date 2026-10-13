@@ -91,7 +91,8 @@ final class NativeCurlHttpClient implements HttpClientInterface
         if (curl_errno($ch)) {
             $errorMsg = curl_error($ch);
             curl_close($ch);
-            throw new RuntimeException("Error en petición cURL a {$url}: {$errorMsg}");
+            $safeUrl = self::sanitizeUrl($url);
+            throw new RuntimeException("Error en petición cURL a {$safeUrl}: {$errorMsg}");
         }
 
         curl_close($ch);
@@ -100,6 +101,14 @@ final class NativeCurlHttpClient implements HttpClientInterface
             statusCode: $statusCode,
             body: is_string($responseBody) ? $responseBody : '',
         );
+    }
+
+    /**
+     * Sanitiza parámetros sensibles en URLs para evitar fugas en logs y trazas de error.
+     */
+    public static function sanitizeUrl(string $url): string
+    {
+        return (string) preg_replace('/([?&](?:key|token|api_key|secret|password|access_token)=)[^&]*/i', '$1***REDACTED***', $url);
     }
 }
 

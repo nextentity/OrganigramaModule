@@ -274,5 +274,16 @@ final class TicketOrchestratorTest extends TestCase
         $updated = $this->repository->findById($ticketId);
         $this->assertSame(TicketStatus::FAILED, $updated?->status());
     }
+
+    public function testSanitizeMessageRedactsApiKeysAndTokens(): void
+    {
+        $raw = 'Error cURL a https://generativelanguage.googleapis.com/v1beta/models/gemini:generateContent?key=AQ.SecretKey1234567890abcdef: timeout. Bearer secret_token_xyz. ghp_123456789012345678901234567890123456';
+        $sanitized = TicketOrchestratorService::sanitizeMessage($raw);
+
+        $this->assertFalse(str_contains($sanitized, 'AQ.SecretKey1234567890abcdef'));
+        $this->assertFalse(str_contains($sanitized, 'key=AQ.SecretKey'));
+        $this->assertFalse(str_contains($sanitized, 'ghp_1234567890'));
+        $this->assertTrue(str_contains($sanitized, '***REDACTED***'));
+    }
 }
 

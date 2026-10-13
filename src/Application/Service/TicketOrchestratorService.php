@@ -103,20 +103,22 @@ final class TicketOrchestratorService
                     break;
             }
         } catch (Throwable $exception) {
-            // Manejo defensivo: registra el error y transiciona el ticket a FAILED en SQLite
+            $safeMessage = self::sanitizeMessage($exception->getMessage());
+
+            // Manejo defensivo: registra el error sanitizado y transiciona el ticket a FAILED en SQLite
             $this->log(sprintf(
                 '✘ [Worker Error] Fallo al procesar ticket %s: %s in %s:%d',
                 $ticket->id,
-                $exception->getMessage(),
+                $safeMessage,
                 $exception->getFile(),
                 $exception->getLine()
             ));
 
             try {
-                $ticket->markAsFailed($exception->getMessage());
+                $ticket->markAsFailed($safeMessage);
                 $this->ticketRepository->update($ticket);
             } catch (Throwable $saveException) {
-                $this->log(sprintf('✘ [Fatal DB Error] No se pudo guardar estado FAILED para %s: %s', $ticket->id, $saveException->getMessage()));
+                $this->log(sprintf('✘ [Fatal DB Error] No se pudo guardar estado FAILED para %s: %s', $ticket->id, self::sanitizeMessage($saveException->getMessage())));
             }
         }
     }
@@ -221,6 +223,28 @@ final class TicketOrchestratorService
     private function log(string $message): void
     {
         ($this->logger)($message);
+    }
+
+    /**
+     * Sanitiza y ofusca tokens, API keys y contraseñas de cualquier mensaje de error o log.
+     */
+    public static function sanitizeMessage(string $message): string
+    {
+        // 1. Redactar Google API Keys (AIza... o AQ...)
+        $message = (string) preg_replace('/(?:AIza|AQ\.)[0-9A-Za-z_-]{20,}/', '***API_KEY_REDACTED***', $message);
+
+        // 2. Redactar GitHub Tokens (ghp_..., github_pat_...)
+        $message = (string) preg_replace('/ghp_[0-9A-Za-z]{30,}/', 'ghp_***REDACTED***', $message);
+        $message = (string) preg_replace('/github_pat_[0-9A-Za-z_]{60,}/', 'github_pat_***REDACTED***', $message);
+
+        // 3. Redactar query params con credenciales (?key=..., &token=...)
+        $message = (string) preg_replace('/([?&](?:key|token|api_key|secret|password|access_token)=)[^&\s"\']+/i', '$1***REDACTED***', $message);
+
+        // 4. Redactar cabeceras Bearer / Basic
+        $message = (string) preg_replace('/(Bearer\s+)[A-Za-z0-9._~+\/-]{10,}/i', '$1***REDACTED***', $message);
+        $message = (string) preg_replace('/(Basic\s+)[A-Za-z0-9+\/=]{10,}/i', '$1***REDACTED***', $message);
+
+        return $message;
     }
 }
 
