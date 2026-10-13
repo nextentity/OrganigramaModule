@@ -12,8 +12,8 @@ use RuntimeException;
 final class NativeCurlHttpClient implements HttpClientInterface
 {
     public function __construct(
-        private readonly int $timeoutSeconds = 15,
-        private readonly int $connectTimeoutSeconds = 5,
+        private readonly int $timeoutSeconds = 45,
+        private readonly int $connectTimeoutSeconds = 10,
     ) {
     }
 
