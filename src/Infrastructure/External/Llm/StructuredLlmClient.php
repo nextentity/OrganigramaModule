@@ -352,8 +352,8 @@ final class StructuredLlmClient implements LlmClientInterface
         }
 
         if (strtolower($this->provider) === 'gemini') {
-            // Modelos de respaldo de alto rendimiento en Google Gemini
-            $defaults = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-2.5-flash-lite'];
+            // Modelos de respaldo estándar de Google Gemini (generación 3.x)
+            $defaults = ['gemini-3.5-flash', 'gemini-3.5-flash-lite'];
             return array_values(array_filter($defaults, fn (string $m): bool => $m !== $this->model));
         }
 

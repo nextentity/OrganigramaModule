@@ -42,7 +42,7 @@ final class StructuredLlmClientTest extends TestCase
                     ], JSON_THROW_ON_ERROR));
                 }
 
-                // El modelo de respaldo gemini-2.5-flash responde con éxito 200 OK
+                // El modelo de respaldo gemini-3.5-flash responde con éxito 200 OK
                 $validTriage = [
                     'summary'         => 'Error en botón de navegación',
                     'type'            => 'bug',
@@ -82,7 +82,7 @@ final class StructuredLlmClientTest extends TestCase
             apiKey: 'AIza_fake_test_key',
             model: 'gemini-3.8-flash',
             provider: 'gemini',
-            fallbackModels: ['gemini-2.5-flash', 'gemini-2.0-flash'],
+            fallbackModels: ['gemini-3.5-flash', 'gemini-2.0-flash'],
             httpClient: $fakeHttpClient,
             logger: $logger,
         );
@@ -93,15 +93,15 @@ final class StructuredLlmClientTest extends TestCase
         $this->assertSame('Error en botón de navegación', $result['summary']);
         $this->assertTrue($result['is_auto_fixable']);
 
-        // Se debe haber probado gemini-3.8-flash primero y luego conmutado a gemini-2.5-flash
+        // Se debe haber probado gemini-3.8-flash primero y luego conmutado a gemini-3.5-flash
         $this->assertTrue(count($calledUrls) >= 2);
         $this->assertTrue(str_contains($calledUrls[0], 'gemini-3.8-flash'));
-        $this->assertTrue(str_contains(end($calledUrls), 'gemini-2.5-flash'));
+        $this->assertTrue(str_contains(end($calledUrls), 'gemini-3.5-flash'));
 
         // Se debe haber emitido log de conmutación de fallback
         $this->assertTrue(count($loggedMessages) >= 1);
         $this->assertTrue(str_contains($loggedMessages[0], 'LLM Fallback'));
-        $this->assertTrue(str_contains($loggedMessages[0], 'gemini-2.5-flash'));
+        $this->assertTrue(str_contains($loggedMessages[0], 'gemini-3.5-flash'));
     }
 
     public function testNonRetryableErrorDoesNotTriggerFallback(): void
@@ -139,7 +139,7 @@ final class StructuredLlmClientTest extends TestCase
             apiKey: 'AIza_bad_key',
             model: 'gemini-3.8-flash',
             provider: 'gemini',
-            fallbackModels: ['gemini-2.5-flash', 'gemini-2.0-flash'],
+            fallbackModels: ['gemini-3.5-flash', 'gemini-2.0-flash'],
             httpClient: $fakeHttpClient,
         );
 
@@ -192,7 +192,7 @@ final class StructuredLlmClientTest extends TestCase
             apiKey: 'AIza_test_key',
             model: 'gemini-3.8-flash',
             provider: 'gemini',
-            fallbackModels: ['gemini-2.5-flash'],
+            fallbackModels: ['gemini-3.5-flash'],
             httpClient: $fakeHttpClient,
         );
 
@@ -208,6 +208,6 @@ final class StructuredLlmClientTest extends TestCase
         // Debe haber probado ambos modelos en la cadena
         $this->assertTrue(count($calledUrls) >= 2);
         $this->assertTrue(str_contains($calledUrls[0], 'gemini-3.8-flash'));
-        $this->assertTrue(str_contains(end($calledUrls), 'gemini-2.5-flash'));
+        $this->assertTrue(str_contains(end($calledUrls), 'gemini-3.5-flash'));
     }
 }
