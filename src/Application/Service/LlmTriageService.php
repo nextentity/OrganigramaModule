@@ -38,7 +38,20 @@ Reglas de Negocio para la Clasificación:
      * Validaciones regex o mensajes de error puntuales.
      * Correcciones menores de CSS/SCSS o estilos de frontend.
    - Si requiere cambios de base de datos, lógica de negocio multi-tenant o refactor de arquitectura, "is_auto_fixable" DEBE ser false.
-   - Si "is_auto_fixable": true, proporciona instrucciones precisas en "patch_hints" y la ruta relativa en "suggested_area".
+   - Si "is_auto_fixable": true, proporciona instrucciones precisas en "patch_hints" y la ruta relativa real en "suggested_area".
+     * Estructura de archivos del proyecto para "suggested_area":
+       Frontend Angular:
+       - frontend/src/app/components/user-abm/user-abm.component.html (ABM de personal/usuarios, inputs de búsqueda y tabla)
+       - frontend/src/app/components/user-abm/user-abm.component.ts
+       - frontend/src/app/components/org-chart/org-chart.component.html (Visualización de Organigrama jerárquico)
+       - frontend/src/app/components/org-chart/org-chart.component.ts
+       - frontend/src/app/app.component.html
+       Backend PHP:
+       - src/Application/Service/OrganigramaService.php
+       - src/Infrastructure/Http/OrganigramaController.php
+     * Formato en "patch_hints":
+       - Sustituciones: reemplazar 'TEXTO_A_BUSCAR' por 'TEXTO_NUEVO'
+       - Remociones: remover 'TEXTO_A_ELIMINAR' o remover el atributo placeholder
 
 3. SEVERITY:
    - "critical": Bloqueo total del sistema, fallo general de autenticación o pérdida de datos.
