@@ -193,31 +193,52 @@ final class StructuredLlmClient implements LlmClientInterface
             ],
         ];
 
-        $response = $client->post($endpoint, $payload, [
-            'Content-Type' => 'application/json',
-        ]);
+        $maxRetries = 3;
+        $lastException = null;
 
-        if (!$response->isSuccessful()) {
-            throw new RuntimeException(
-                "Error al invocar Gemini LLM ({$response->statusCode}): " . substr($response->body, 0, 300)
-            );
+        for ($attempt = 1; $attempt <= $maxRetries; $attempt++) {
+            try {
+                $response = $client->post($endpoint, $payload, [
+                    'Content-Type' => 'application/json',
+                ]);
+
+                if (!$response->isSuccessful()) {
+                    if (in_array($response->statusCode, [429, 500, 502, 503, 504], true) && $attempt < $maxRetries) {
+                        usleep(1500000 * $attempt);
+                        continue;
+                    }
+
+                    throw new RuntimeException(
+                        "Error al invocar Gemini LLM ({$response->statusCode}): " . substr($response->body, 0, 300)
+                    );
+                }
+
+                $data = $response->json();
+                $rawContent = $data['candidates'][0]['content']['parts'][0]['text'] ?? null;
+
+                if (!is_string($rawContent)) {
+                    throw new RuntimeException('Respuesta de Gemini vacía o malformada.');
+                }
+
+                $parsed = json_decode($rawContent, true);
+                if (!is_array($parsed)) {
+                    throw new RuntimeException('El contenido devuelto por Gemini no es un JSON válido.');
+                }
+
+                $this->validateSchemaKeys($parsed);
+
+                return $parsed;
+            } catch (Throwable $e) {
+                $lastException = $e;
+                if ($attempt < $maxRetries) {
+                    usleep(1500000 * $attempt);
+                    continue;
+                }
+                throw $e;
+            }
         }
 
-        $data = $response->json();
-        $rawContent = $data['candidates'][0]['content']['parts'][0]['text'] ?? null;
-
-        if (!is_string($rawContent)) {
-            throw new RuntimeException('Respuesta de Gemini vacía o malformada.');
-        }
-
-        $parsed = json_decode($rawContent, true);
-        if (!is_array($parsed)) {
-            throw new RuntimeException('El contenido devuelto por Gemini no es un JSON válido.');
-        }
-
-        $this->validateSchemaKeys($parsed);
-
-        return $parsed;
+        throw $lastException ?? new RuntimeException('Error desconocido al llamar a Gemini.');
     }
 
     /**
