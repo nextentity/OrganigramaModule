@@ -129,9 +129,14 @@ final class PdoTicketRepository implements TicketRepositoryInterface
             WHERE id = :id
         ');
 
+        $triageJson = $ticket->triageResult()?->toJson();
+        if ($triageJson === null && $ticket->failureReason() !== null) {
+            $triageJson = (string) json_encode(['error' => $ticket->failureReason()], JSON_UNESCAPED_UNICODE);
+        }
+
         $stmt->execute([
             ':status'              => $ticket->status()->value,
-            ':triage_result'       => $ticket->triageResult()?->toJson(),
+            ':triage_result'       => $triageJson,
             ':github_issue_number' => $ticket->githubIssueNumber(),
             ':github_pr_url'       => $ticket->githubPrUrl(),
             ':jira_key'            => $ticket->jiraKey(),
@@ -154,8 +159,14 @@ final class PdoTicketRepository implements TicketRepositoryInterface
         }
 
         $triageResult = null;
+        $failureReason = null;
         if (isset($row['triage_result']) && is_string($row['triage_result']) && trim($row['triage_result']) !== '') {
-            $triageResult = TriageResult::fromJson($row['triage_result']);
+            $decoded = json_decode($row['triage_result'], true);
+            if (is_array($decoded) && isset($decoded['error'])) {
+                $failureReason = (string) $decoded['error'];
+            } elseif (is_array($decoded)) {
+                $triageResult = TriageResult::fromArray($decoded);
+            }
         }
 
         $createdAt = isset($row['created_at']) && is_string($row['created_at'])
@@ -178,6 +189,7 @@ final class PdoTicketRepository implements TicketRepositoryInterface
             jiraKey: isset($row['jira_key']) && is_string($row['jira_key']) ? $row['jira_key'] : null,
             createdAt: $createdAt,
             updatedAt: $updatedAt,
+            failureReason: $failureReason,
         );
     }
 }

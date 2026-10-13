@@ -7,6 +7,7 @@ namespace Tests\Infrastructure\Http;
 use App\Application\Service\TicketIngestionService;
 use App\Domain\Model\SourceChannel;
 use App\Domain\Model\Ticket;
+use App\Domain\Model\TicketStatus;
 use App\Infrastructure\Http\Router;
 use App\Infrastructure\Http\SupportTicketController;
 use App\Infrastructure\Repository\PdoTicketRepository;
@@ -30,6 +31,7 @@ final class SupportTicketEndpointTest extends TestCase
         $this->router = new Router();
         $this->router->add('POST', '/api/v1/tickets', [$controller, 'createTicket']);
         $this->router->add('GET', '/api/v1/tickets/{ticketId}', [$controller, 'getTicket']);
+        $this->router->add('POST', '/api/v1/tickets/{ticketId}/retry', [$controller, 'retryTicket']);
     }
 
     public function testPostTicketReturns202AcceptedWithTicketIdAndPendingStatus(): void
@@ -112,6 +114,22 @@ final class SupportTicketEndpointTest extends TestCase
         $errorResponse = $this->dispatch('GET', "/api/v1/tickets/{$notFoundId}");
         $this->assertSame('error', $errorResponse['status']);
         $this->assertTrue(str_contains($errorResponse['message'], 'Ticket no encontrado'));
+    }
+
+    public function testRetryFailedTicketRequeuesToPending(): void
+    {
+        $ticketId = Uuid::v4();
+        $ticket = Ticket::createPending($ticketId, SourceChannel::WEBFORM, 'customer_retry', ['message' => 'Test Retry']);
+        $ticket->markAsFailed('Simulated failure reason');
+        $this->repository->save($ticket);
+
+        $response = $this->dispatch('POST', "/api/v1/tickets/{$ticketId}/retry");
+
+        $this->assertSame($ticketId, $response['ticket_id']);
+        $this->assertSame('PENDING', $response['status']);
+
+        $refreshed = $this->repository->findById($ticketId);
+        $this->assertSame(TicketStatus::PENDING, $refreshed?->status());
     }
 
     /**

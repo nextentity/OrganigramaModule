@@ -27,8 +27,12 @@ enum TicketStatus: string
             return true;
         }
 
-        if ($this->isTerminal()) {
+        if ($this === self::RESOLVED) {
             return false;
+        }
+
+        if ($this === self::FAILED) {
+            return $target === self::PENDING;
         }
 
         return match ($this) {

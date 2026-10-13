@@ -26,6 +26,7 @@ final class Ticket
         private ?string $jiraKey = null,
         public readonly DateTimeImmutable $createdAt = new DateTimeImmutable(),
         private ?DateTimeImmutable $updatedAt = null,
+        private ?string $failureReason = null,
     ) {
         $this->assertInvariants();
     }
@@ -161,12 +162,17 @@ final class Ticket
         $this->touch();
     }
 
+    public function failureReason(): ?string
+    {
+        return $this->failureReason;
+    }
+
     /**
      * Transición defensiva a FAILED en caso de excepciones irrecuperables.
      */
     public function markAsFailed(string $reason): void
     {
-        if ($this->status->isTerminal()) {
+        if ($this->status === TicketStatus::RESOLVED) {
             throw new InvalidTicketTransitionException(
                 $this->id,
                 $this->status->value,
@@ -175,7 +181,27 @@ final class Ticket
             );
         }
 
+        $this->failureReason = $reason;
         $this->status = TicketStatus::FAILED;
+        $this->touch();
+    }
+
+    /**
+     * Permite reencolar un ticket en FAILED para reintentar su procesamiento.
+     */
+    public function retry(): void
+    {
+        if ($this->status !== TicketStatus::FAILED) {
+            throw new InvalidTicketTransitionException(
+                $this->id,
+                $this->status->value,
+                TicketStatus::PENDING->value,
+                'Solo se pueden reintentar tickets en estado FAILED.',
+            );
+        }
+
+        $this->status = TicketStatus::PENDING;
+        $this->failureReason = null;
         $this->touch();
     }
 
@@ -211,6 +237,7 @@ final class Ticket
             'raw_payload'         => $this->rawPayload,
             'status'              => $this->status->value,
             'triage_result'       => $this->triageResult?->toArray(),
+            'failure_reason'      => $this->failureReason,
             'github_issue_number' => $this->githubIssueNumber,
             'github_pr_url'       => $this->githubPrUrl,
             'jira_key'            => $this->jiraKey,

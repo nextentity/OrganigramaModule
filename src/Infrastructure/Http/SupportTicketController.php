@@ -47,5 +47,26 @@ final class SupportTicketController
 
         JsonResponse::success($ticket->toArray());
     }
+
+    /**
+     * Reintento de ticket: POST /api/v1/tickets/{ticketId}/retry
+     */
+    public function retryTicket(string $ticketId): void
+    {
+        $ticket = $this->ticketRepository->findById($ticketId);
+
+        if ($ticket === null) {
+            throw new TicketNotFoundException($ticketId);
+        }
+
+        $ticket->retry();
+        $this->ticketRepository->update($ticket);
+
+        JsonResponse::accepted([
+            'ticket_id' => $ticket->id,
+            'status'    => 'PENDING',
+            'message'   => 'Ticket reencolado para procesamiento por el worker.',
+        ]);
+    }
 }
 

@@ -14,7 +14,7 @@ use RuntimeException;
  */
 final class StructuredLlmClient implements LlmClientInterface
 {
-    private const TRIAGE_JSON_SCHEMA = [
+    private const OPENAI_JSON_SCHEMA = [
         'type'                 => 'object',
         'properties'           => [
             'summary'         => ['type' => 'string'],
@@ -39,6 +39,29 @@ final class StructuredLlmClient implements LlmClientInterface
         'additionalProperties' => false,
     ];
 
+    private const GEMINI_JSON_SCHEMA = [
+        'type'       => 'OBJECT',
+        'properties' => [
+            'summary'         => ['type' => 'STRING'],
+            'type'            => ['type' => 'STRING', 'enum' => ['bug', 'operational_question', 'feature_request']],
+            'severity'        => ['type' => 'STRING', 'enum' => ['low', 'medium', 'high', 'critical']],
+            'repro_steps'     => ['type' => 'ARRAY', 'items' => ['type' => 'STRING']],
+            'is_auto_fixable' => ['type' => 'BOOLEAN'],
+            'suggested_area'  => ['type' => 'STRING'],
+            'patch_hints'     => ['type' => 'STRING'],
+            'canned_response' => ['type' => 'STRING', 'nullable' => true],
+        ],
+        'required'   => [
+            'summary',
+            'type',
+            'severity',
+            'repro_steps',
+            'is_auto_fixable',
+            'suggested_area',
+            'patch_hints',
+        ],
+    ];
+
     public function __construct(
         private readonly string $apiKey = '',
         private readonly string $model = 'gpt-4o-mini',
@@ -51,9 +74,20 @@ final class StructuredLlmClient implements LlmClientInterface
     public static function fromEnvironment(?HttpClientInterface $httpClient = null): self
     {
         $apiKey = (string) (getenv('LLM_API_KEY') ?: '');
-        $model = (string) (getenv('LLM_MODEL') ?: 'gpt-4o-mini');
+        $provider = strtolower((string) (getenv('LLM_PROVIDER') ?: 'openai'));
+
+        // Auto-detección inteligente: si la API key empieza con AIza, es Google Gemini
+        if ($provider === 'openai' && str_starts_with($apiKey, 'AIza')) {
+            $provider = 'gemini';
+        }
+
+        $defaultModel = $provider === 'gemini' ? 'gemini-2.5-flash' : 'gpt-4o-mini';
+        $model = (string) (getenv('LLM_MODEL') ?: $defaultModel);
+        if ($provider === 'gemini' && ($model === 'gpt-4o-mini' || $model === '')) {
+            $model = 'gemini-2.5-flash';
+        }
+
         $baseUrl = (string) (getenv('LLM_BASE_URL') ?: 'https://api.openai.com/v1');
-        $provider = (string) (getenv('LLM_PROVIDER') ?: 'openai');
 
         return new self(
             apiKey: $apiKey,
@@ -95,7 +129,7 @@ final class StructuredLlmClient implements LlmClientInterface
                 'json_schema' => [
                     'name'   => 'support_triage_result',
                     'strict' => true,
-                    'schema' => self::TRIAGE_JSON_SCHEMA,
+                    'schema' => self::OPENAI_JSON_SCHEMA,
                 ],
             ],
             'temperature'     => 0.1,
@@ -131,9 +165,14 @@ final class StructuredLlmClient implements LlmClientInterface
 
     private function callGeminiApi(HttpClientInterface $client, string $userPrompt, string $systemInstruction): array
     {
+        $model = $this->model;
+        if ($model === 'gpt-4o-mini' || $model === '') {
+            $model = 'gemini-2.5-flash';
+        }
+
         $endpoint = sprintf(
             'https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s',
-            urlencode($this->model),
+            urlencode($model),
             urlencode($this->apiKey)
         );
 
@@ -149,7 +188,7 @@ final class StructuredLlmClient implements LlmClientInterface
             ],
             'generationConfig'  => [
                 'responseMimeType' => 'application/json',
-                'responseSchema'   => self::TRIAGE_JSON_SCHEMA,
+                'responseSchema'   => self::GEMINI_JSON_SCHEMA,
                 'temperature'      => 0.1,
             ],
         ];

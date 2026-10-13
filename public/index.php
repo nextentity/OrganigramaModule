@@ -43,6 +43,7 @@ $ticketController = new App\Infrastructure\Http\SupportTicketController($ticketI
 
 $router->add('POST', '/api/v1/tickets', [$ticketController, 'createTicket']);
 $router->add('GET', '/api/v1/tickets/{ticketId}', [$ticketController, 'getTicket']);
+$router->add('POST', '/api/v1/tickets/{ticketId}/retry', [$ticketController, 'retryTicket']);
 
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 $uri = $_SERVER['REQUEST_URI'] ?? '/';
