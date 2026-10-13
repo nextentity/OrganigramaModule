@@ -31,6 +31,7 @@ final class SupportTicketEndpointTest extends TestCase
         $this->router = new Router();
         $this->router->add('GET', '/api/v1/tickets', [$controller, 'listTickets']);
         $this->router->add('POST', '/api/v1/tickets', [$controller, 'createTicket']);
+        $this->router->add('POST', '/api/v1/tickets/sync', [$controller, 'syncTickets']);
         $this->router->add('GET', '/api/v1/tickets/{ticketId}', [$controller, 'getTicket']);
         $this->router->add('POST', '/api/v1/tickets/{ticketId}/retry', [$controller, 'retryTicket']);
     }
@@ -145,6 +146,14 @@ final class SupportTicketEndpointTest extends TestCase
 
         $refreshed = $this->repository->findById($ticketId);
         $this->assertSame(TicketStatus::PENDING, $refreshed?->status());
+    }
+
+    public function testSyncTicketsEndpointReturnsSuccess(): void
+    {
+        $response = $this->dispatch('POST', '/api/v1/tickets/sync');
+
+        $this->assertSame('success', $response['status']);
+        $this->assertTrue(isset($response['data']['reconciled']));
     }
 
     /**

@@ -65,6 +65,60 @@ final class TicketOrchestratorService
     }
 
     /**
+     * Reconcilia el estado de tickets en AUTO_FIXING u OPEN con el estado real de GitHub.
+     * Si el issue de GitHub asociado está cerrado (por ejemplo tras la aprobación y fusión del PR),
+     * transiciona automáticamente el ticket a RESOLVED.
+     *
+     * @return int Cantidad de tickets transicionados a RESOLVED
+     */
+    public function reconcileActiveTickets(int $limit = 20): int
+    {
+        $activeTickets = $this->ticketRepository->findActiveWithExternalIssues($limit);
+        $resolvedCount = 0;
+
+        foreach ($activeTickets as $ticket) {
+            $issueNumber = $ticket->githubIssueNumber();
+            if ($issueNumber === null) {
+                continue;
+            }
+
+            try {
+                $issue = $this->gitHubClient->getIssue($issueNumber);
+                if ($issue === null) {
+                    continue;
+                }
+
+                if (($issue['state'] ?? '') === 'closed') {
+                    $resolutionMessage = sprintf(
+                        'Resuelto automáticamente tras fusión de Pull Request y cierre de GitHub Issue #%d.',
+                        $issueNumber
+                    );
+                    $ticket->markAsResolved($resolutionMessage);
+                    $this->ticketRepository->update($ticket);
+
+                    $this->log(sprintf(
+                        '✔ [Reconciliation] Ticket %s (#%d) actualizado a RESOLVED (GitHub Issue cerrado%s).',
+                        $ticket->id,
+                        $issueNumber,
+                        !empty($issue['closed_at']) ? " en {$issue['closed_at']}" : ''
+                    ));
+
+                    $resolvedCount++;
+                }
+            } catch (Throwable $e) {
+                $this->log(sprintf(
+                    '⚠ [Reconciliation] Error al consultar GitHub Issue #%d para ticket %s: %s',
+                    $issueNumber,
+                    $ticket->id,
+                    self::sanitizeMessage($e->getMessage())
+                ));
+            }
+        }
+
+        return $resolvedCount;
+    }
+
+    /**
      * Procesa un ticket individual con manejo defensivo de fallos.
      */
     public function processSingleTicket(Ticket $ticket): void

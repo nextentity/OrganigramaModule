@@ -71,6 +71,8 @@ final class TicketOrchestratorTest extends TestCase
             {
                 return 'body';
             }
+            public function getIssue(int $issueNumber): ?array { return null; }
+            public function isConfigured(): bool { return true; }
         };
 
         $fakeJira = new class implements JiraClientInterface {
@@ -139,6 +141,8 @@ final class TicketOrchestratorTest extends TestCase
             {
                 return 'Issue body markdown';
             }
+            public function getIssue(int $issueNumber): ?array { return null; }
+            public function isConfigured(): bool { return true; }
         };
 
         $fakeJira = new class implements JiraClientInterface {
@@ -210,6 +214,8 @@ final class TicketOrchestratorTest extends TestCase
             {
                 return 'Auto fix body';
             }
+            public function getIssue(int $issueNumber): ?array { return null; }
+            public function isConfigured(): bool { return true; }
         };
 
         $fakeJira = new class implements JiraClientInterface {
@@ -255,6 +261,8 @@ final class TicketOrchestratorTest extends TestCase
             public function createIssue(string $title, string $body, array $labels = []): array { return []; }
             public function triggerWorkflowDispatch(string $workflowFileName, string $ref, array $inputs): bool { return false; }
             public function formatIssueBody(Ticket $ticket, TriageResult $triage): string { return ''; }
+            public function getIssue(int $issueNumber): ?array { return null; }
+            public function isConfigured(): bool { return true; }
         };
 
         $fakeJira = new class implements JiraClientInterface {
@@ -284,6 +292,125 @@ final class TicketOrchestratorTest extends TestCase
         $this->assertFalse(str_contains($sanitized, 'key=AQ.SecretKey'));
         $this->assertFalse(str_contains($sanitized, 'ghp_1234567890'));
         $this->assertTrue(str_contains($sanitized, '***REDACTED***'));
+    }
+
+    public function testReconcileActiveTicketsTransitionsToResolvedWhenGitHubIssueIsClosed(): void
+    {
+        $ticketId = Uuid::v4();
+        $ticket = Ticket::createPending($ticketId, SourceChannel::WEBFORM, 'client_autofix', [
+            'message' => 'Bug report',
+        ]);
+        $ticket->markAsTriaged(new TriageResult(
+            summary: 'Bug auto-reparable',
+            type: TicketType::BUG,
+            severity: TicketSeverity::LOW,
+            reproSteps: ['Paso 1'],
+            isAutoFixable: true,
+            suggestedArea: 'src/Domain/Model/User.php',
+            patchHints: 'Fix hint',
+        ));
+        $ticket->markAsAutoFixing(10, 'SUP-10');
+        $this->repository->save($ticket);
+
+        $fakeGitHub = new class implements GitHubClientInterface {
+            public function createIssue(string $title, string $body, array $labels = []): array { return []; }
+            public function triggerWorkflowDispatch(string $workflowFileName, string $ref, array $inputs): bool { return false; }
+            public function formatIssueBody(Ticket $ticket, TriageResult $triage): string { return ''; }
+            public function getIssue(int $issueNumber): ?array
+            {
+                if ($issueNumber === 10) {
+                    return [
+                        'number'    => 10,
+                        'state'     => 'closed',
+                        'closed_at' => '2026-10-13T21:56:35Z',
+                        'html_url'  => 'https://github.com/issues/10',
+                    ];
+                }
+                return null;
+            }
+            public function isConfigured(): bool { return true; }
+        };
+
+        $dummyTriage = new class implements LlmTriageServiceInterface {
+            public function triage(Ticket $ticket): TriageResult { throw new RuntimeException('No debe llamarse'); }
+        };
+
+        $fakeJira = new class implements JiraClientInterface {
+            public function createIssue(string $summary, string $description, string $issueType = 'Bug', ?string $githubIssueUrl = null): array { return []; }
+        };
+
+        $orchestrator = new TicketOrchestratorService(
+            ticketRepository: $this->repository,
+            triageService: $dummyTriage,
+            gitHubClient: $fakeGitHub,
+            jiraClient: $fakeJira,
+            logger: static fn () => null,
+        );
+
+        $reconciledCount = $orchestrator->reconcileActiveTickets();
+        $this->assertSame(1, $reconciledCount);
+
+        $updated = $this->repository->findById($ticketId);
+        $this->assertTrue($updated !== null);
+        $this->assertSame(TicketStatus::RESOLVED, $updated->status());
+        $this->assertTrue(str_contains((string) $updated->triageResult()?->cannedResponse, 'cierre de GitHub Issue #10'));
+    }
+
+    public function testReconcileActiveTicketsLeavesOpenWhenGitHubIssueIsOpen(): void
+    {
+        $ticketId = Uuid::v4();
+        $ticket = Ticket::createPending($ticketId, SourceChannel::WEBFORM, 'client_open', [
+            'message' => 'Bug still in progress',
+        ]);
+        $ticket->markAsTriaged(new TriageResult(
+            summary: 'Bug abierto',
+            type: TicketType::BUG,
+            severity: TicketSeverity::MEDIUM,
+            reproSteps: [],
+            isAutoFixable: false,
+            suggestedArea: 'src/',
+            patchHints: '',
+        ));
+        $ticket->markAsOpen(8, 'SUP-8');
+        $this->repository->save($ticket);
+
+        $fakeGitHub = new class implements GitHubClientInterface {
+            public function createIssue(string $title, string $body, array $labels = []): array { return []; }
+            public function triggerWorkflowDispatch(string $workflowFileName, string $ref, array $inputs): bool { return false; }
+            public function formatIssueBody(Ticket $ticket, TriageResult $triage): string { return ''; }
+            public function getIssue(int $issueNumber): ?array
+            {
+                return [
+                    'number'    => 8,
+                    'state'     => 'open',
+                    'closed_at' => null,
+                    'html_url'  => 'https://github.com/issues/8',
+                ];
+            }
+            public function isConfigured(): bool { return true; }
+        };
+
+        $dummyTriage = new class implements LlmTriageServiceInterface {
+            public function triage(Ticket $ticket): TriageResult { throw new RuntimeException('No debe llamarse'); }
+        };
+
+        $fakeJira = new class implements JiraClientInterface {
+            public function createIssue(string $summary, string $description, string $issueType = 'Bug', ?string $githubIssueUrl = null): array { return []; }
+        };
+
+        $orchestrator = new TicketOrchestratorService(
+            ticketRepository: $this->repository,
+            triageService: $dummyTriage,
+            gitHubClient: $fakeGitHub,
+            jiraClient: $fakeJira,
+            logger: static fn () => null,
+        );
+
+        $reconciledCount = $orchestrator->reconcileActiveTickets();
+        $this->assertSame(0, $reconciledCount);
+
+        $updated = $this->repository->findById($ticketId);
+        $this->assertSame(TicketStatus::OPEN, $updated?->status());
     }
 }
 

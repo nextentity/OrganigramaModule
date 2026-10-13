@@ -39,10 +39,12 @@ $router->add('POST', '/api/seed/reset', [$controller, 'resetSeed']);
 // Rutas del módulo de Soporte y Triaging Automatizado con IA
 $ticketRepository = new App\Infrastructure\Repository\PdoTicketRepository($pdo);
 $ticketIngestionService = new App\Application\Service\TicketIngestionService($ticketRepository);
-$ticketController = new App\Infrastructure\Http\SupportTicketController($ticketIngestionService, $ticketRepository);
+$gitHubClient = App\Infrastructure\External\GitHub\GitHubClient::fromEnvironment();
+$ticketController = new App\Infrastructure\Http\SupportTicketController($ticketIngestionService, $ticketRepository, $gitHubClient);
 
 $router->add('GET', '/api/v1/tickets', [$ticketController, 'listTickets']);
 $router->add('POST', '/api/v1/tickets', [$ticketController, 'createTicket']);
+$router->add('POST', '/api/v1/tickets/sync', [$ticketController, 'syncTickets']);
 $router->add('GET', '/api/v1/tickets/{ticketId}', [$ticketController, 'getTicket']);
 $router->add('POST', '/api/v1/tickets/{ticketId}/retry', [$ticketController, 'retryTicket']);
 

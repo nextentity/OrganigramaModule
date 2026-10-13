@@ -84,6 +84,40 @@ final class GitHubClient implements GitHubClientInterface
     /**
      * {@inheritdoc}
      */
+    public function getIssue(int $issueNumber): ?array
+    {
+        if (!$this->isConfigured()) {
+            return null;
+        }
+
+        $url = sprintf('%s/repos/%s/%s/issues/%d', rtrim($this->apiBaseUrl, '/'), $this->owner, $this->repo, $issueNumber);
+        $client = $this->httpClient ?? new NativeCurlHttpClient();
+
+        $response = $client->get($url, $this->defaultHeaders());
+
+        if ($response->statusCode === 404) {
+            return null;
+        }
+
+        if (!$response->isSuccessful()) {
+            throw new RuntimeException(
+                "Error al consultar GitHub Issue #{$issueNumber} ({$response->statusCode}): " . substr($response->body, 0, 300)
+            );
+        }
+
+        $data = $response->json();
+
+        return [
+            'number'    => (int) ($data['number'] ?? $issueNumber),
+            'state'     => (string) ($data['state'] ?? 'open'),
+            'closed_at' => isset($data['closed_at']) ? (string) $data['closed_at'] : null,
+            'html_url'  => (string) ($data['html_url'] ?? ''),
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function triggerWorkflowDispatch(string $workflowFileName, string $ref, array $inputs): bool
     {
         if ($this->token === '' || $this->token === 'mock' || $this->token === 'test') {

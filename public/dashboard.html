@@ -375,8 +375,11 @@
         let pollInterval = null;
         let ticketsList = [];
 
-        async function fetchTickets() {
+        async function fetchTickets(forceSync = false) {
             try {
+                if (forceSync) {
+                    await fetch('/api/v1/tickets/sync', { method: 'POST' }).catch(() => {});
+                }
                 const res = await fetch('/api/v1/tickets?limit=50');
                 if (!res.ok) throw new Error('Error al consultar /api/v1/tickets');
                 const json = await res.json();
@@ -952,23 +955,25 @@
         }
 
         function toggleAutoPoll() {
-            isPolling = !isPolling;
             const icon = document.getElementById('poll-icon');
             const label = document.getElementById('poll-label');
+
             if (isPolling) {
+                // Sincronización forzada inmediata con GitHub y Jira al presionar Sync
+                icon.classList.add('animate-spin');
+                fetchTickets(true);
+            } else {
+                isPolling = true;
                 icon.classList.add('animate-spin');
                 label.textContent = "Sync";
+                fetchTickets(true);
                 startPolling();
-            } else {
-                icon.classList.remove('animate-spin');
-                label.textContent = "Pausado";
-                clearInterval(pollInterval);
             }
         }
 
         function startPolling() {
             clearInterval(pollInterval);
-            pollInterval = setInterval(fetchTickets, 2000);
+            pollInterval = setInterval(() => fetchTickets(false), 2000);
         }
 
         function escapeHtml(str) {

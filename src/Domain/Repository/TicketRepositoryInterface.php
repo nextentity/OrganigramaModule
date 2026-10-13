@@ -45,5 +45,12 @@ interface TicketRepositoryInterface
      * @return list<Ticket>
      */
     public function findRecent(int $limit = 50): array;
+
+    /**
+     * Obtiene tickets activos (AUTO_FIXING u OPEN) que tienen un issue de GitHub asociado.
+     *
+     * @return list<Ticket>
+     */
+    public function findActiveWithExternalIssues(int $limit = 20): array;
 }
 

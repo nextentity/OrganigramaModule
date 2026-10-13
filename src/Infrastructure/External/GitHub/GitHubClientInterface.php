@@ -31,5 +31,17 @@ interface GitHubClientInterface
      * Formatea el cuerpo del issue en Markdown profesional.
      */
     public function formatIssueBody(Ticket $ticket, TriageResult $triage): string;
+
+    /**
+     * Consulta el estado de un issue en GitHub.
+     *
+     * @return array{number: int, state: string, closed_at: ?string, html_url: string}|null
+     */
+    public function getIssue(int $issueNumber): ?array;
+
+    /**
+     * Indica si el cliente cuenta con credenciales válidas configuradas.
+     */
+    public function isConfigured(): bool;
 }
 

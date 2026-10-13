@@ -115,5 +115,24 @@ final class PdoTicketRepositoryTest extends TestCase
         $this->assertSame('Pantalla rota', $updated->triageResult()?->summary);
         $this->assertTrue($updated->triageResult()?->isAutoFixable ?? false);
     }
+
+    public function testFindActiveWithExternalIssues(): void
+    {
+        $id1 = Uuid::v4();
+        $ticket1 = Ticket::createPending($id1, SourceChannel::API, 'user_1', ['test' => 1]);
+        $ticket1->markAsTriaged(new TriageResult('Summary 1', TicketType::BUG, TicketSeverity::LOW, [], true, 'src/', ''));
+        $ticket1->markAsAutoFixing(99, 'SUP-99');
+        $this->repository->save($ticket1);
+
+        $id2 = Uuid::v4();
+        $ticket2 = Ticket::createPending($id2, SourceChannel::API, 'user_2', ['test' => 2]);
+        $ticket2->markAsTriaged(new TriageResult('Summary 2', TicketType::OPERATIONAL_QUESTION, TicketSeverity::LOW, [], false, 'docs', '', 'Respuesta'));
+        $ticket2->markAsResolved('Respuesta');
+        $this->repository->save($ticket2);
+
+        $active = $this->repository->findActiveWithExternalIssues();
+        $this->assertSame(1, count($active));
+        $this->assertSame($id1, $active[0]->id);
+    }
 }
 

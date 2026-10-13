@@ -83,9 +83,10 @@ if (function_exists('pcntl_signal')) {
 do {
     try {
         $processed = $orchestrator->processPendingBatch($limit);
+        $reconciled = $orchestrator->reconcileActiveTickets($limit);
 
-        if ($processed > 0) {
-            $logger(sprintf('✔ Ciclo completado: %d ticket(s) procesados.', $processed));
+        if ($processed > 0 || $reconciled > 0) {
+            $logger(sprintf('✔ Ciclo completado: %d pendiente(s) procesados, %d ticket(s) reconciliados a RESOLVED.', $processed, $reconciled));
         }
 
         if ($runOnce) {
@@ -93,7 +94,7 @@ do {
             break;
         }
 
-        if ($processed === 0) {
+        if ($processed === 0 && $reconciled === 0) {
             sleep($sleepSeconds);
         }
     } catch (Throwable $unhandled) {

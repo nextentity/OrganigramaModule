@@ -121,6 +121,33 @@ final class PdoTicketRepository implements TicketRepositoryInterface
     /**
      * {@inheritdoc}
      */
+    public function findActiveWithExternalIssues(int $limit = 20): array
+    {
+        $stmt = $this->pdo->prepare('
+            SELECT id, source_channel, customer_id, raw_payload, status, triage_result,
+                   github_issue_number, github_pr_url, jira_key, created_at, updated_at
+            FROM support_tickets
+            WHERE status IN (:auto_fixing, :open)
+              AND github_issue_number IS NOT NULL
+            ORDER BY updated_at ASC
+            LIMIT :limit
+        ');
+        $stmt->bindValue(':auto_fixing', TicketStatus::AUTO_FIXING->value);
+        $stmt->bindValue(':open', TicketStatus::OPEN->value);
+        $stmt->bindValue(':limit', max(1, min($limit, 50)), PDO::PARAM_INT);
+        $stmt->execute();
+
+        $results = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $results[] = $this->hydrateTicket($row);
+        }
+
+        return $results;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function claimTicket(string $id): bool
     {
         // Actualización atómica condicional: sólo 1 worker gana la contención
