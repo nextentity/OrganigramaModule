@@ -98,6 +98,29 @@ final class PdoTicketRepository implements TicketRepositoryInterface
     /**
      * {@inheritdoc}
      */
+    public function findRecent(int $limit = 50): array
+    {
+        $stmt = $this->pdo->prepare('
+            SELECT id, source_channel, customer_id, raw_payload, status, triage_result,
+                   github_issue_number, github_pr_url, jira_key, created_at, updated_at
+            FROM support_tickets
+            ORDER BY created_at DESC
+            LIMIT :limit
+        ');
+        $stmt->bindValue(':limit', max(1, min($limit, 100)), PDO::PARAM_INT);
+        $stmt->execute();
+
+        $results = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $results[] = $this->hydrateTicket($row);
+        }
+
+        return $results;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function claimTicket(string $id): bool
     {
         // Actualización atómica condicional: sólo 1 worker gana la contención

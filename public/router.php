@@ -16,6 +16,13 @@ if (str_starts_with($uri, '/api')) {
     exit(0);
 }
 
+// Servir Dashboard Interactivo del Agente IA en / o /dashboard
+if (($uri === '/' || $uri === '/dashboard') && is_file(__DIR__ . '/dashboard.html')) {
+    header('Content-Type: text/html; charset=utf-8');
+    readfile(__DIR__ . '/dashboard.html');
+    exit(0);
+}
+
 // Buscar archivos estáticos en public/ o en el build de Angular (frontend/dist)
 $distDir = dirname(__DIR__) . '/frontend/dist/organigrama-frontend/browser';
 if (!is_dir($distDir)) {

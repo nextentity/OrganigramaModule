@@ -41,12 +41,19 @@ $ticketRepository = new App\Infrastructure\Repository\PdoTicketRepository($pdo);
 $ticketIngestionService = new App\Application\Service\TicketIngestionService($ticketRepository);
 $ticketController = new App\Infrastructure\Http\SupportTicketController($ticketIngestionService, $ticketRepository);
 
+$router->add('GET', '/api/v1/tickets', [$ticketController, 'listTickets']);
 $router->add('POST', '/api/v1/tickets', [$ticketController, 'createTicket']);
 $router->add('GET', '/api/v1/tickets/{ticketId}', [$ticketController, 'getTicket']);
 $router->add('POST', '/api/v1/tickets/{ticketId}/retry', [$ticketController, 'retryTicket']);
 
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
-$uri = $_SERVER['REQUEST_URI'] ?? '/';
+$uri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/';
+
+if (($uri === '/' || $uri === '/dashboard') && is_file(__DIR__ . '/dashboard.html')) {
+    header('Content-Type: text/html; charset=utf-8');
+    readfile(__DIR__ . '/dashboard.html');
+    exit(0);
+}
 
 $router->dispatch($method, $uri);
 

@@ -38,5 +38,12 @@ interface TicketRepositoryInterface
      * Actualiza el estado, resultados de triage y metadatos de integraciones.
      */
     public function update(Ticket $ticket): void;
+
+    /**
+     * Obtiene tickets ordenados por fecha de creación descendente para dashboards y monitoreo.
+     *
+     * @return list<Ticket>
+     */
+    public function findRecent(int $limit = 50): array;
 }
 

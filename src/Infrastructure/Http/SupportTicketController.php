@@ -35,6 +35,17 @@ final class SupportTicketController
     }
 
     /**
+     * Listado de tickets recientes: GET /api/v1/tickets
+     */
+    public function listTickets(): void
+    {
+        $limit = isset($_GET['limit']) ? (int) $_GET['limit'] : 50;
+        $tickets = $this->ticketRepository->findRecent($limit);
+
+        JsonResponse::success(array_map(static fn ($ticket): array => $ticket->toArray(), $tickets));
+    }
+
+    /**
      * Consulta de estado: GET /api/v1/tickets/{ticketId}
      */
     public function getTicket(string $ticketId): void

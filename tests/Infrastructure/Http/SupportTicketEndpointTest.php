@@ -29,9 +29,24 @@ final class SupportTicketEndpointTest extends TestCase
         $controller = new SupportTicketController($ingestionService, $this->repository);
 
         $this->router = new Router();
+        $this->router->add('GET', '/api/v1/tickets', [$controller, 'listTickets']);
         $this->router->add('POST', '/api/v1/tickets', [$controller, 'createTicket']);
         $this->router->add('GET', '/api/v1/tickets/{ticketId}', [$controller, 'getTicket']);
         $this->router->add('POST', '/api/v1/tickets/{ticketId}/retry', [$controller, 'retryTicket']);
+    }
+
+    public function testListTicketsReturnsArrayOfRecentTickets(): void
+    {
+        $id = Uuid::v4();
+        $ticket = Ticket::createPending($id, SourceChannel::WEBFORM, 'user_list', ['msg' => 'test']);
+        $this->repository->save($ticket);
+
+        $response = $this->dispatch('GET', '/api/v1/tickets');
+
+        $this->assertSame('success', $response['status']);
+        $this->assertTrue(is_array($response['data']));
+        $this->assertTrue(count($response['data']) >= 1);
+        $this->assertSame($id, $response['data'][0]['id']);
     }
 
     public function testPostTicketReturns202AcceptedWithTicketIdAndPendingStatus(): void
