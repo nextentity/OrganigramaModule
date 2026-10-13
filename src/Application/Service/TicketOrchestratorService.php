@@ -83,12 +83,40 @@ final class TicketOrchestratorService
             }
 
             try {
-                $issue = $this->gitHubClient->getIssue($issueNumber);
-                if ($issue === null) {
-                    continue;
+                // 1. Verificar si existe Pull Request para la rama generada por este ticket
+                $branchName = "fix/ticket-{$ticket->id}";
+                $pr = $this->gitHubClient->findPullRequestForBranch($branchName);
+                if ($pr !== null) {
+                    if ($ticket->githubPrUrl() !== $pr['html_url']) {
+                        $ticket->setGithubPrUrl($pr['html_url']);
+                        $this->ticketRepository->update($ticket);
+                        $this->log(sprintf('✔ [Reconciliation] Ticket %s vinculado a PR %s (Estado: %s)', $ticket->id, $pr['html_url'], $pr['state']));
+                    }
+
+                    if ($pr['merged'] || $pr['state'] === 'closed') {
+                        $resolutionMessage = sprintf(
+                            'Resuelto automáticamente tras fusión de Pull Request #%d y cierre de GitHub Issue #%d.',
+                            $pr['number'],
+                            $issueNumber
+                        );
+                        $ticket->markAsResolved($resolutionMessage);
+                        $this->ticketRepository->update($ticket);
+
+                        $this->log(sprintf(
+                            '✔ [Reconciliation] Ticket %s (#%d) actualizado a RESOLVED (Pull Request #%d cerrado/fusionado).',
+                            $ticket->id,
+                            $issueNumber,
+                            $pr['number']
+                        ));
+
+                        $resolvedCount++;
+                        continue;
+                    }
                 }
 
-                if (($issue['state'] ?? '') === 'closed') {
+                // 2. Verificar estado del Issue en GitHub
+                $issue = $this->gitHubClient->getIssue($issueNumber);
+                if ($issue !== null && ($issue['state'] ?? '') === 'closed') {
                     $resolutionMessage = sprintf(
                         'Resuelto automáticamente tras fusión de Pull Request y cierre de GitHub Issue #%d.',
                         $issueNumber

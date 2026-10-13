@@ -122,3 +122,8 @@ jobs:
 
           gh issue comment "${{ inputs.issue_number }}" --body "🤖 **AI Auto-Fix Iniciado:** Se ha creado el Pull Request automatizado $PR_URL. Por favor revise los cambios."
 
+          # Sincronizar en tiempo real con el módulo de soporte en Railway
+          curl -s -X POST "https://web-production-3156a.up.railway.app/api/v1/tickets/${{ inputs.ticket_id }}/pr" \
+            -H "Content-Type: application/json" \
+            -d "{\"pr_url\": \"$PR_URL\"}" || true
+

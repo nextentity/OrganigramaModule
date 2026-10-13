@@ -40,6 +40,13 @@ interface GitHubClientInterface
     public function getIssue(int $issueNumber): ?array;
 
     /**
+     * Consulta si existe un Pull Request para la rama de un ticket.
+     *
+     * @return array{number: int, html_url: string, state: string, merged: bool}|null
+     */
+    public function findPullRequestForBranch(string $branchName): ?array;
+
+    /**
      * Indica si el cliente cuenta con credenciales válidas configuradas.
      */
     public function isConfigured(): bool;

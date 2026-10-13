@@ -34,6 +34,7 @@ final class SupportTicketEndpointTest extends TestCase
         $this->router->add('POST', '/api/v1/tickets/sync', [$controller, 'syncTickets']);
         $this->router->add('GET', '/api/v1/tickets/{ticketId}', [$controller, 'getTicket']);
         $this->router->add('POST', '/api/v1/tickets/{ticketId}/retry', [$controller, 'retryTicket']);
+        $this->router->add('POST', '/api/v1/tickets/{ticketId}/pr', [$controller, 'setTicketPr']);
     }
 
     public function testListTicketsReturnsArrayOfRecentTickets(): void
@@ -154,6 +155,23 @@ final class SupportTicketEndpointTest extends TestCase
 
         $this->assertSame('success', $response['status']);
         $this->assertTrue(isset($response['data']['reconciled']));
+    }
+
+    public function testSetTicketPrEndpointUpdatesTicketPrUrl(): void
+    {
+        $ticketId = Uuid::v4();
+        $ticket = Ticket::createPending($ticketId, SourceChannel::WEBFORM, 'client_pr_api', ['msg' => 'test']);
+        $this->repository->save($ticket);
+
+        $response = $this->dispatch('POST', "/api/v1/tickets/{$ticketId}/pr", [
+            'pr_url' => 'https://github.com/nextentity/OrganigramaModule/pull/20',
+        ]);
+
+        $this->assertSame('success', $response['status']);
+        $this->assertSame('https://github.com/nextentity/OrganigramaModule/pull/20', $response['data']['github_pr_url']);
+
+        $refreshed = $this->repository->findById($ticketId);
+        $this->assertSame('https://github.com/nextentity/OrganigramaModule/pull/20', $refreshed?->githubPrUrl());
     }
 
     /**

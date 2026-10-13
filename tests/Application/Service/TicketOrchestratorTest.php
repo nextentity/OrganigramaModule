@@ -72,6 +72,7 @@ final class TicketOrchestratorTest extends TestCase
                 return 'body';
             }
             public function getIssue(int $issueNumber): ?array { return null; }
+            public function findPullRequestForBranch(string $branchName): ?array { return null; }
             public function isConfigured(): bool { return true; }
         };
 
@@ -142,6 +143,7 @@ final class TicketOrchestratorTest extends TestCase
                 return 'Issue body markdown';
             }
             public function getIssue(int $issueNumber): ?array { return null; }
+            public function findPullRequestForBranch(string $branchName): ?array { return null; }
             public function isConfigured(): bool { return true; }
         };
 
@@ -215,6 +217,7 @@ final class TicketOrchestratorTest extends TestCase
                 return 'Auto fix body';
             }
             public function getIssue(int $issueNumber): ?array { return null; }
+            public function findPullRequestForBranch(string $branchName): ?array { return null; }
             public function isConfigured(): bool { return true; }
         };
 
@@ -262,6 +265,7 @@ final class TicketOrchestratorTest extends TestCase
             public function triggerWorkflowDispatch(string $workflowFileName, string $ref, array $inputs): bool { return false; }
             public function formatIssueBody(Ticket $ticket, TriageResult $triage): string { return ''; }
             public function getIssue(int $issueNumber): ?array { return null; }
+            public function findPullRequestForBranch(string $branchName): ?array { return null; }
             public function isConfigured(): bool { return true; }
         };
 
@@ -328,6 +332,7 @@ final class TicketOrchestratorTest extends TestCase
                 }
                 return null;
             }
+            public function findPullRequestForBranch(string $branchName): ?array { return null; }
             public function isConfigured(): bool { return true; }
         };
 
@@ -387,6 +392,7 @@ final class TicketOrchestratorTest extends TestCase
                     'html_url'  => 'https://github.com/issues/8',
                 ];
             }
+            public function findPullRequestForBranch(string $branchName): ?array { return null; }
             public function isConfigured(): bool { return true; }
         };
 
@@ -411,6 +417,69 @@ final class TicketOrchestratorTest extends TestCase
 
         $updated = $this->repository->findById($ticketId);
         $this->assertSame(TicketStatus::OPEN, $updated?->status());
+    }
+
+    public function testReconcileActiveTicketsDiscoversOpenPullRequestAndBindsUrl(): void
+    {
+        $ticketId = Uuid::v4();
+        $ticket = Ticket::createPending($ticketId, SourceChannel::WEBFORM, 'client_pr_test', [
+            'message' => 'Bug pending PR review',
+        ]);
+        $ticket->markAsTriaged(new TriageResult(
+            summary: 'Bug auto-reparable en espera de PR',
+            type: TicketType::BUG,
+            severity: TicketSeverity::LOW,
+            reproSteps: [],
+            isAutoFixable: true,
+            suggestedArea: 'src/Domain/Model/User.php',
+            patchHints: 'Hints',
+        ));
+        $ticket->markAsAutoFixing(14, 'SUP-14');
+        $this->repository->save($ticket);
+
+        $fakeGitHub = new class implements GitHubClientInterface {
+            public function createIssue(string $title, string $body, array $labels = []): array { return []; }
+            public function triggerWorkflowDispatch(string $workflowFileName, string $ref, array $inputs): bool { return false; }
+            public function formatIssueBody(Ticket $ticket, TriageResult $triage): string { return ''; }
+            public function getIssue(int $issueNumber): ?array
+            {
+                return ['number' => 14, 'state' => 'open', 'closed_at' => null, 'html_url' => 'https://github.com/issues/14'];
+            }
+            public function findPullRequestForBranch(string $branchName): ?array
+            {
+                return [
+                    'number'   => 15,
+                    'html_url' => 'https://github.com/nextentity/OrganigramaModule/pull/15',
+                    'state'    => 'open',
+                    'merged'   => false,
+                ];
+            }
+            public function isConfigured(): bool { return true; }
+        };
+
+        $dummyTriage = new class implements LlmTriageServiceInterface {
+            public function triage(Ticket $ticket): TriageResult { throw new RuntimeException('No debe llamarse'); }
+        };
+
+        $fakeJira = new class implements JiraClientInterface {
+            public function createIssue(string $summary, string $description, string $issueType = 'Bug', ?string $githubIssueUrl = null): array { return []; }
+        };
+
+        $orchestrator = new TicketOrchestratorService(
+            ticketRepository: $this->repository,
+            triageService: $dummyTriage,
+            gitHubClient: $fakeGitHub,
+            jiraClient: $fakeJira,
+            logger: static fn () => null,
+        );
+
+        $reconciledCount = $orchestrator->reconcileActiveTickets();
+        $this->assertSame(0, $reconciledCount);
+
+        $updated = $this->repository->findById($ticketId);
+        $this->assertTrue($updated !== null);
+        $this->assertSame('https://github.com/nextentity/OrganigramaModule/pull/15', $updated->githubPrUrl());
+        $this->assertSame(TicketStatus::AUTO_FIXING, $updated->status());
     }
 }
 

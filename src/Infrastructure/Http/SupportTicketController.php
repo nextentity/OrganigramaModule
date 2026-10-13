@@ -72,7 +72,7 @@ final class SupportTicketController
     }
 
     /**
-     * Reconcilia tickets en AUTO_FIXING u OPEN contra GitHub Issue status.
+     * Reconcilia tickets en AUTO_FIXING u OPEN contra GitHub Issue y PR status.
      */
     public function reconcileActiveTickets(): int
     {
@@ -90,6 +90,29 @@ final class SupportTicketController
             }
 
             try {
+                // 1. Descubrir Pull Request si aún no está vinculado o verificar si ya fue fusionado
+                $branchName = "fix/ticket-{$ticket->id}";
+                $pr = $this->gitHubClient->findPullRequestForBranch($branchName);
+                if ($pr !== null) {
+                    if ($ticket->githubPrUrl() !== $pr['html_url']) {
+                        $ticket->setGithubPrUrl($pr['html_url']);
+                        $this->ticketRepository->update($ticket);
+                    }
+
+                    if ($pr['merged'] || $pr['state'] === 'closed') {
+                        $resolutionMessage = sprintf(
+                            'Resuelto automáticamente tras fusión de Pull Request #%d y cierre de GitHub Issue #%d.',
+                            $pr['number'],
+                            $issueNumber
+                        );
+                        $ticket->markAsResolved($resolutionMessage);
+                        $this->ticketRepository->update($ticket);
+                        $count++;
+                        continue;
+                    }
+                }
+
+                // 2. Verificar estado del Issue en GitHub
                 $issue = $this->gitHubClient->getIssue($issueNumber);
                 if ($issue !== null && ($issue['state'] ?? '') === 'closed') {
                     $resolutionMessage = sprintf(
@@ -106,6 +129,31 @@ final class SupportTicketController
         }
 
         return $count;
+    }
+
+    /**
+     * Notificación de Pull Request creado: POST /api/v1/tickets/{ticketId}/pr
+     */
+    public function setTicketPr(string $ticketId): void
+    {
+        $ticket = $this->ticketRepository->findById($ticketId);
+        if ($ticket === null) {
+            throw new TicketNotFoundException($ticketId);
+        }
+
+        $body = Request::getJsonBody();
+        $prUrl = isset($body['pr_url']) && is_string($body['pr_url']) ? trim($body['pr_url']) : '';
+
+        if ($prUrl !== '') {
+            $ticket->setGithubPrUrl($prUrl);
+            $this->ticketRepository->update($ticket);
+        }
+
+        JsonResponse::success([
+            'ticket_id'     => $ticket->id,
+            'github_pr_url' => $ticket->githubPrUrl(),
+            'message'       => 'Pull Request vinculado exitosamente.',
+        ]);
     }
 
     /**

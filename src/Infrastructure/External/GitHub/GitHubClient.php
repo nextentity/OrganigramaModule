@@ -118,6 +118,45 @@ final class GitHubClient implements GitHubClientInterface
     /**
      * {@inheritdoc}
      */
+    public function findPullRequestForBranch(string $branchName): ?array
+    {
+        if (!$this->isConfigured()) {
+            return null;
+        }
+
+        $url = sprintf(
+            '%s/repos/%s/%s/pulls?head=%s:%s&state=all',
+            rtrim($this->apiBaseUrl, '/'),
+            $this->owner,
+            $this->repo,
+            $this->owner,
+            urlencode($branchName)
+        );
+
+        $client = $this->httpClient ?? new NativeCurlHttpClient();
+        $response = $client->get($url, $this->defaultHeaders());
+
+        if (!$response->isSuccessful()) {
+            return null;
+        }
+
+        $pulls = $response->json();
+        if (!is_array($pulls) || empty($pulls[0]) || !is_array($pulls[0])) {
+            return null;
+        }
+
+        $first = $pulls[0];
+        return [
+            'number'   => (int) ($first['number'] ?? 0),
+            'html_url' => (string) ($first['html_url'] ?? ''),
+            'state'    => (string) ($first['state'] ?? 'open'),
+            'merged'   => !empty($first['merged_at']),
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function triggerWorkflowDispatch(string $workflowFileName, string $ref, array $inputs): bool
     {
         if ($this->token === '' || $this->token === 'mock' || $this->token === 'test') {
