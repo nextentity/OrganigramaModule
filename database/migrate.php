@@ -43,6 +43,18 @@ try {
         // Ignorar de forma defensiva si no existe la tabla
     }
 
+    // Limpieza automática en deploy: conservar únicamente incidentes resueltos
+    try {
+        $pruneStmt = $pdo->prepare("DELETE FROM support_tickets WHERE status != 'RESOLVED'");
+        $pruneStmt->execute();
+        $prunedCount = $pruneStmt->rowCount();
+        if ($prunedCount > 0) {
+            fwrite(STDOUT, "• Purgados {$prunedCount} incidentes no resueltos (conservando sólo RESOLVED)\n");
+        }
+    } catch (Throwable) {
+        // Ignorar de forma defensiva si no existe la tabla
+    }
+
     fwrite(STDOUT, sprintf(
         "✔ Esquema aplicado en %s (%d sentencias)\n",
         DatabaseDriver::fromPdo($pdo)->value,

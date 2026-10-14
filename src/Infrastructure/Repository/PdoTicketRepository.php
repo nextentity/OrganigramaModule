@@ -197,6 +197,17 @@ final class PdoTicketRepository implements TicketRepositoryInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function deleteNonResolved(): int
+    {
+        $stmt = $this->pdo->prepare('DELETE FROM support_tickets WHERE status != :resolved');
+        $stmt->execute([':resolved' => TicketStatus::RESOLVED->value]);
+
+        return $stmt->rowCount();
+    }
+
+    /**
      * @param array<string, mixed> $row
      */
     private function hydrateTicket(array $row): Ticket

@@ -52,5 +52,12 @@ interface TicketRepositoryInterface
      * @return list<Ticket>
      */
     public function findActiveWithExternalIssues(int $limit = 20): array;
+
+    /**
+     * Elimina permanentemente todos los tickets que no se encuentren en estado RESOLVED.
+     *
+     * @return int Cantidad de registros eliminados.
+     */
+    public function deleteNonResolved(): int;
 }
 

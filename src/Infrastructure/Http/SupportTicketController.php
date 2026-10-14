@@ -190,5 +190,18 @@ final class SupportTicketController
             'message'   => 'Ticket reencolado para procesamiento por el worker.',
         ]);
     }
+
+    /**
+     * Purgado de tickets no resueltos: POST /api/v1/tickets/prune
+     */
+    public function pruneTickets(): void
+    {
+        $deleted = $this->ticketRepository->deleteNonResolved();
+
+        JsonResponse::success([
+            'deleted' => $deleted,
+            'message' => "Limpieza completada: {$deleted} ticket(s) no resueltos fueron purgados de la base de datos.",
+        ]);
+    }
 }
 

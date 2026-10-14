@@ -48,6 +48,7 @@ $router->add('POST', '/api/v1/tickets/sync', [$ticketController, 'syncTickets'])
 $router->add('GET', '/api/v1/tickets/{ticketId}', [$ticketController, 'getTicket']);
 $router->add('POST', '/api/v1/tickets/{ticketId}/retry', [$ticketController, 'retryTicket']);
 $router->add('POST', '/api/v1/tickets/{ticketId}/pr', [$ticketController, 'setTicketPr']);
+$router->add('POST', '/api/v1/tickets/prune', [$ticketController, 'pruneTickets']);
 
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 $uri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/';

@@ -35,6 +35,7 @@ final class SupportTicketEndpointTest extends TestCase
         $this->router->add('GET', '/api/v1/tickets/{ticketId}', [$controller, 'getTicket']);
         $this->router->add('POST', '/api/v1/tickets/{ticketId}/retry', [$controller, 'retryTicket']);
         $this->router->add('POST', '/api/v1/tickets/{ticketId}/pr', [$controller, 'setTicketPr']);
+        $this->router->add('POST', '/api/v1/tickets/prune', [$controller, 'pruneTickets']);
     }
 
     public function testListTicketsReturnsArrayOfRecentTickets(): void
@@ -172,6 +173,27 @@ final class SupportTicketEndpointTest extends TestCase
 
         $refreshed = $this->repository->findById($ticketId);
         $this->assertSame('https://github.com/nextentity/OrganigramaModule/pull/20', $refreshed?->githubPrUrl());
+    }
+
+    public function testPruneTicketsEndpointRemovesUnresolved(): void
+    {
+        $idResolved = Uuid::v4();
+        $ticketResolved = Ticket::createPending($idResolved, SourceChannel::API, 'client_1', ['msg' => 'test 1']);
+        $ticketResolved->markAsTriaged(new \App\Domain\Model\TriageResult('Ok', \App\Domain\Model\TicketType::OPERATIONAL_QUESTION, \App\Domain\Model\TicketSeverity::LOW, [], false, 'docs', '', 'Respuesta'));
+        $ticketResolved->markAsResolved('Respuesta');
+        $this->repository->save($ticketResolved);
+
+        $idPending = Uuid::v4();
+        $ticketPending = Ticket::createPending($idPending, SourceChannel::API, 'client_2', ['msg' => 'test 2']);
+        $this->repository->save($ticketPending);
+
+        $response = $this->dispatch('POST', '/api/v1/tickets/prune');
+
+        $this->assertSame('success', $response['status']);
+        $this->assertSame(1, $response['data']['deleted']);
+
+        $this->assertTrue($this->repository->findById($idResolved) !== null);
+        $this->assertNull($this->repository->findById($idPending));
     }
 
     /**

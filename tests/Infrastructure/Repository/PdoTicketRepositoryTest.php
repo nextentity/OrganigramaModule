@@ -134,5 +134,30 @@ final class PdoTicketRepositoryTest extends TestCase
         $this->assertSame(1, count($active));
         $this->assertSame($id1, $active[0]->id);
     }
+
+    public function testDeleteNonResolvedRemovesOnlyUnresolvedTickets(): void
+    {
+        $idResolved = Uuid::v4();
+        $ticketResolved = Ticket::createPending($idResolved, SourceChannel::API, 'user_1', ['test' => 1]);
+        $ticketResolved->markAsTriaged(new TriageResult('Resuelto', TicketType::OPERATIONAL_QUESTION, TicketSeverity::LOW, [], false, 'docs', '', 'Respuesta'));
+        $ticketResolved->markAsResolved('Listo');
+        $this->repository->save($ticketResolved);
+
+        $idPending = Uuid::v4();
+        $ticketPending = Ticket::createPending($idPending, SourceChannel::API, 'user_2', ['test' => 2]);
+        $this->repository->save($ticketPending);
+
+        $idFailed = Uuid::v4();
+        $ticketFailed = Ticket::createPending($idFailed, SourceChannel::API, 'user_3', ['test' => 3]);
+        $ticketFailed->markAsFailed('Simulated failure');
+        $this->repository->save($ticketFailed);
+
+        $deleted = $this->repository->deleteNonResolved();
+        $this->assertSame(2, $deleted);
+
+        $this->assertTrue($this->repository->findById($idResolved) !== null);
+        $this->assertNull($this->repository->findById($idPending));
+        $this->assertNull($this->repository->findById($idFailed));
+    }
 }
 
